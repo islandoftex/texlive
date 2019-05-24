@@ -1,0 +1,109 @@
+image: docker:latest
+variables:
+  DOCKER_DRIVER: overlay2
+  RELEASE_IMAGE: registry.gitlab.com/islandoftex/images/texlive
+services:
+  - docker:dind
+stages:
+  - baseimage
+  - build
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker info
+
+build:baseimage:
+  stage: baseimage
+  script:
+    - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
+    - docker push $RELEASE_IMAGE:base
+
+build:latest:
+  stage: build
+  script:
+    - CURRENTRELEASE=2019
+    - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`-$CI_COMMIT_SHORT_SHA"
+    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest .
+    - docker push $RELEASE_IMAGE:$IMAGETAG
+    - docker push $RELEASE_IMAGE:latest
+
+.historictemplate: &historicdefinition
+  stage: build
+  script:
+    - IMAGETAG="TL$CURRENTRELEASE-historic"
+    - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
+    - docker pull $RELEASE_IMAGE:$IMAGETAG || true
+    - docker build --cache-from $RELEASE_IMAGE:$IMAGETAG -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
+    - docker push $RELEASE_IMAGE:$IMAGETAG
+
+build:historic:2018:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2018
+  <<: *historicdefinition
+
+build:historic:2017:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2017
+  <<: *historicdefinition
+
+build:historic:2016:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2016
+  <<: *historicdefinition
+
+build:historic:2015:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2015
+  <<: *historicdefinition
+
+build:historic:2014:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2014
+  <<: *historicdefinition
+
+build:historic:2013:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2013
+    ISONAME: texlive2013.iso
+  <<: *historicdefinition
+
+build:historic:2012:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2012
+    ISONAME: texlive2012.iso
+  <<: *historicdefinition
+
+build:historic:2011:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2011
+    ISONAME: texlive2011.iso
+  <<: *historicdefinition
+
+build:historic:2010:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2010
+    ISONAME: texlive2010.iso
+  <<: *historicdefinition
+
+build:historic:2009:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2009
+    ISONAME: texlive2009.iso
+  <<: *historicdefinition
+
+build:historic:2008:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2008
+    ISONAME: texlive2008.iso
+  <<: *historicdefinition

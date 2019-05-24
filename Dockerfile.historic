@@ -1,0 +1,37 @@
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+
+ARG CURRENTRELEASE
+ARG ISONAME=texlive.iso
+RUN echo "Building image for historic TeX Live $CURRENTRELEASE"
+
+# install Vanilla TeX Live
+RUN cd /tmp/ && \
+  echo "Downloading TL iso" && \
+  wget -nv $TLHISTMIRRORURL/$CURRENTRELEASE/$ISONAME && \ 
+  echo "Extracting iso" && \
+  # extract image content into /mnt
+  xorriso -osirrox on -indev ./texlive.iso -extract / /mnt && \
+  # choose complete installation
+  echo "selected_scheme scheme-full" > install.profile && \ 
+  # … but disable documentation and source files to stay slim
+  echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
+  echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
+  echo "tlpdbopt_autobackup 0" >> install.profile && \ 
+  # furthermore we want our symlinks in the system binary folder to avoid
+  # fiddling around with the PATH
+  echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
+  # start installation
+  cd /mnt/ && \ 
+  ./install-tl -profile /tmp/install.profile && \ 
+  cd /tmp/ && rm -rf /mnt/* && \ 
+  rm -rf texlive.iso
+
+# add all relevant binaries to the PATH
+ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
+    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \ 
+    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
+
+# test the installation
+RUN latex --version && echo "\n" && \ 
+  python --version && echo "\n" && \ 
+  pygmentize -V

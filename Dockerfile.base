@@ -1,0 +1,30 @@
+# We choose a Debian base image instead of Alpine as there are binareies
+# (e.g. biber) which are not distributed for the Linux/MUSL platform (at least
+# not via default TeX Live)
+FROM debian:sid 
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \ 
+    # ConTeXt cache can be created on runtime and does not need to
+    # increase image size
+    TEXLIVE_INSTALL_NO_CONTEXT_CACHE=1 \ 
+    # As we will not install regular documentation why would we want to
+    # install perl docs…
+    NOPERLDOC=1 \ 
+    # The base mirror is TUG's historic FTP mirror
+    TLHISTMIRRORURL=ftp://tug.org/historic/systems/texlive \ 
+    # To get the latest packages available we always use the root mirror
+    TLMIRRORURL=http://dante.ctan.org/tex-archive/systems/texlive/tlnet
+
+RUN apt-get update && \ 
+  # basic utilities for TeX Live installation
+  apt-get install -y wget unzip git tar xorriso \ 
+  # miscellaneous dependencies for TeX Live tools
+  make fontconfig perl default-jre libgetopt-long-descriptive-perl \
+  libdigest-perl-md5-perl libncurses5 libncurses6 \ 
+  # for syntax highlighting
+  python3-pygments && \ 
+  rm -rf /var/lib/apt/lists/*
+
+# one should not do this…
+RUN ln -s /usr/bin/python3 /usr/bin/python

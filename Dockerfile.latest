@@ -1,0 +1,28 @@
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+
+# install Vanilla TeX Live
+RUN wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
+  tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz && \ 
+  cd install-tl* && \ 
+  # choose complete installation
+  echo "selected_scheme scheme-full" > install.profile && \ 
+  # … but disable documentation and source files to stay slim
+  echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
+  echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
+  echo "tlpdbopt_autobackup 0" >> install.profile && \ 
+  # furthermore we want our symlinks in the system binary folder to avoid
+  # fiddling around with the PATH
+  echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
+  ./install-tl -profile install.profile -repository $TLMIRRORURL && \ 
+  cd .. && rm -rf install-tl*
+
+# add all relevant binaries to the PATH
+RUN `find /usr/local/texlive -name tlmgr` path add
+
+# test the installation
+RUN latex --version && echo "\n" && \ 
+  biber --version && echo "\n" && \ 
+  xindy --version && echo "\n" && \ 
+  arara --version && echo "\n" && \ 
+  python --version && echo "\n" && \ 
+  pygmentize -V

@@ -66,42 +66,42 @@ build:historic:2014:
     CURRENTRELEASE: 2014
   <<: *historicdefinition
 
-build:historic:2013:
+.build:historic:2013:
   stage: build
   variables:
     CURRENTRELEASE: 2013
     ISONAME: texlive2013.iso
   <<: *historicdefinition
 
-build:historic:2012:
+.build:historic:2012:
   stage: build
   variables:
     CURRENTRELEASE: 2012
     ISONAME: texlive2012.iso
   <<: *historicdefinition
 
-build:historic:2011:
+.build:historic:2011:
   stage: build
   variables:
     CURRENTRELEASE: 2011
     ISONAME: texlive2011.iso
   <<: *historicdefinition
 
-build:historic:2010:
+.build:historic:2010:
   stage: build
   variables:
     CURRENTRELEASE: 2010
     ISONAME: texlive2010.iso
   <<: *historicdefinition
 
-build:historic:2009:
+.build:historic:2009:
   stage: build
   variables:
     CURRENTRELEASE: 2009
     ISONAME: texlive2009.iso
   <<: *historicdefinition
 
-build:historic:2008:
+.build:historic:2008:
   stage: build
   variables:
     CURRENTRELEASE: 2008

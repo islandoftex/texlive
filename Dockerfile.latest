@@ -13,7 +13,7 @@ RUN wget $TLMIRRORURL/install-tl-unx.tar.gz && \
   # furthermore we want our symlinks in the system binary folder to avoid
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
-  ./install-tl -profile install.profile -repository $TLMIRRORURL && \ 
+  ./install-tl -profile install.profile && \ 
   cd .. && rm -rf install-tl*
 
 # add all relevant binaries to the PATH

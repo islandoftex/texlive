@@ -1,0 +1,11 @@
+% arara: pdflatex: {shell: yes} 
+% This file tests the compilation of a document with pdflatex by using the
+% arara tool and minted (for trying whether Pygments works).
+\documentclass{article}
+\usepackage{minted}
+\begin{document}
+\begin{minted}{python}
+def c():
+  pass
+\end{minted}
+\end{document}

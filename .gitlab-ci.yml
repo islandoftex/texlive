@@ -1,34 +1,49 @@
-image: docker:latest
 variables:
   DOCKER_DRIVER: overlay2
   RELEASE_IMAGE: registry.gitlab.com/islandoftex/images/texlive
-services:
-  - docker:dind
 stages:
   - baseimage
   - build
+  - test
 
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-  - docker info
+.buildtemplate: &builddefinition
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker info
+
+.testtemplate: &testdefinition
+  stage: test
+  script:
+    - arara -lv test.tex
 
 build:baseimage:
   stage: baseimage
+  <<: *builddefinition
   script:
     - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - docker push $RELEASE_IMAGE:base
 
 build:latest:
   stage: build
+  <<: *builddefinition
   script:
     - CURRENTRELEASE=2019
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`-$CI_COMMIT_SHORT_SHA"
     - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest .
     - docker push $RELEASE_IMAGE:$IMAGETAG
     - docker push $RELEASE_IMAGE:latest
+test:latest:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:latest
+  needs: ["build:latest"]
+  <<: *testdefinition
 
 .historictemplate: &historicdefinition
   stage: build
+  <<: *builddefinition
   script:
     - IMAGETAG="TL$CURRENTRELEASE-historic"
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
@@ -41,30 +56,55 @@ build:historic:2018:
   variables:
     CURRENTRELEASE: 2018
   <<: *historicdefinition
+test:historic:2018:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:TL2018-historic
+  needs: ["build:historic:2018"]
+  <<: *testdefinition
 
 build:historic:2017:
   stage: build
   variables:
     CURRENTRELEASE: 2017
   <<: *historicdefinition
+test:historic:2017:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:TL2017-historic
+  needs: ["build:historic:2017"]
+  <<: *testdefinition
 
 build:historic:2016:
   stage: build
   variables:
     CURRENTRELEASE: 2016
   <<: *historicdefinition
+test:historic:2016:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:TL2016-historic
+  needs: ["build:historic:2016"]
+  <<: *testdefinition
 
 build:historic:2015:
   stage: build
   variables:
     CURRENTRELEASE: 2015
   <<: *historicdefinition
+test:historic:2015:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:TL2015-historic
+  needs: ["build:historic:2015"]
+  <<: *testdefinition
 
 build:historic:2014:
   stage: build
   variables:
     CURRENTRELEASE: 2014
   <<: *historicdefinition
+test:historic:2014:
+  stage: test
+  image: registry.gitlab.com/islandoftex/images/texlive:TL2014-historic
+  needs: ["build:historic:2014"]
+  <<: *testdefinition
 
 .build:historic:2013:
   stage: build

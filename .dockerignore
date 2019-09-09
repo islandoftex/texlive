@@ -1,4 +1,5 @@
 .git
 .gitlab-ci.yml
 *.md
+create-historical-jobs.sh
 test.*

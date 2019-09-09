@@ -1,14 +1,24 @@
 FROM registry.gitlab.com/islandoftex/images/texlive:base
 
+# whether to install documentation and/or source files
+# this has to be yes or no
+ARG DOCFILES=no
+ARG SRCFILES=no
+
+RUN echo "Building with documentation: $DOCFILES" && \
+  echo "Building with sources: $SRCFILES"
+
 # install Vanilla TeX Live
 RUN wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
   tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz && \ 
   cd install-tl* && \ 
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \ 
-  # … but disable documentation and source files to stay slim
-  echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
-  echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
+  # … but disable documentation and source files when asked to stay slim
+  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
+    echo "BUILD: Disabling documentation files"; fi && \ 
+  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \ 
+    echo "BUILD: Disabling source files"; fi && \
   echo "tlpdbopt_autobackup 0" >> install.profile && \ 
   # furthermore we want our symlinks in the system binary folder to avoid
   # fiddling around with the PATH
@@ -25,4 +35,6 @@ RUN latex --version && echo "\n" && \
   xindy --version && echo "\n" && \ 
   arara --version && echo "\n" && \ 
   python --version && echo "\n" && \ 
-  pygmentize -V
+  pygmentize -V && echo "\n" && \ 
+  if [ "$DOCFILES" = "yes" ]; then texdoc -lI geometry; fi && \
+  if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi

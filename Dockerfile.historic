@@ -1,8 +1,17 @@
 FROM registry.gitlab.com/islandoftex/images/texlive:base
 
+# the TeX Live release (year)
 ARG CURRENTRELEASE
+# whether to install documentation and/or source files
+# this has to be yes or no
+ARG DOCFILES=no
+ARG SRCFILES=no
+# the iso name on the server
 ARG ISONAME=texlive.iso
-RUN echo "Building image for historic TeX Live $CURRENTRELEASE"
+
+RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
+  echo "Building with documentation: $DOCFILES" && \
+  echo "Building with sources: $SRCFILES"
 
 # install Vanilla TeX Live
 RUN cd /tmp/ && \
@@ -13,9 +22,11 @@ RUN cd /tmp/ && \
   xorriso -osirrox on -indev ./texlive.iso -extract / /mnt && \
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \ 
-  # … but disable documentation and source files to stay slim
-  echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
-  echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
+  # … but disable documentation and source files when asked to stay slim
+  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
+    echo "BUILD: Disabling documentation files"; fi && \ 
+  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \ 
+    echo "BUILD: Disabling source files"; fi && \
   echo "tlpdbopt_autobackup 0" >> install.profile && \ 
   # furthermore we want our symlinks in the system binary folder to avoid
   # fiddling around with the PATH
@@ -34,4 +45,6 @@ ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
 # test the installation
 RUN latex --version && echo "\n" && \ 
   python --version && echo "\n" && \ 
-  pygmentize -V
+  pygmentize -V && \ 
+  if [ "$DOCFILES" = "yes" ]; then texdoc -l -M geometry; fi && \
+  if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi

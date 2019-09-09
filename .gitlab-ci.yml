@@ -5,6 +5,7 @@ stages:
   - baseimage
   - build
   - test
+  - extrabuild
 
 .buildtemplate: &builddefinition
   image: docker:latest
@@ -26,85 +27,245 @@ build:baseimage:
     - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - docker push $RELEASE_IMAGE:base
 
-build:latest:
-  stage: build
+.latesttemplate: &latestdefinition
   <<: *builddefinition
   script:
-    - CURRENTRELEASE=2019
-    - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`-$CI_COMMIT_SHORT_SHA"
-    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest .
+    - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
+    - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
+    - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
+    - docker pull $RELEASE_IMAGE:$IMAGETAG || true
+    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
-    - docker push $RELEASE_IMAGE:latest
+    - docker push $RELEASE_IMAGE:latest$SUFFIX
+
+build:latest:
+  stage: build
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "no"
+    SRCFILES: "no"
+  <<: *latestdefinition
 test:latest:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:latest
   needs: ["build:latest"]
   <<: *testdefinition
+build:latest:doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *latestdefinition
+build:latest:src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *latestdefinition
+build:latest:docsrc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *latestdefinition
 
 .historictemplate: &historicdefinition
-  stage: build
   <<: *builddefinition
   script:
-    - IMAGETAG="TL$CURRENTRELEASE-historic"
+    - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
+    - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
+    - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
     - docker pull $RELEASE_IMAGE:$IMAGETAG || true
-    - docker build --cache-from $RELEASE_IMAGE:$IMAGETAG -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
+    - docker build --cache-from $RELEASE_IMAGE:$IMAGETAG -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
 
 build:historic:2018:
   stage: build
   variables:
     CURRENTRELEASE: 2018
+    DOCFILES: "no"
+    SRCFILES: "no"
   <<: *historicdefinition
 test:historic:2018:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:TL2018-historic
   needs: ["build:historic:2018"]
   <<: *testdefinition
-
+build:historic:2018-doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2018
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2018-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2018
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2018-doc-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2018
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 build:historic:2017:
   stage: build
   variables:
     CURRENTRELEASE: 2017
+    DOCFILES: "no"
+    SRCFILES: "no"
   <<: *historicdefinition
 test:historic:2017:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:TL2017-historic
   needs: ["build:historic:2017"]
   <<: *testdefinition
-
+build:historic:2017-doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2017
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2017-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2017
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2017-doc-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2017
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 build:historic:2016:
   stage: build
   variables:
     CURRENTRELEASE: 2016
+    DOCFILES: "no"
+    SRCFILES: "no"
   <<: *historicdefinition
 test:historic:2016:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:TL2016-historic
   needs: ["build:historic:2016"]
   <<: *testdefinition
-
+build:historic:2016-doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2016
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2016-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2016
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2016-doc-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2016
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 build:historic:2015:
   stage: build
   variables:
     CURRENTRELEASE: 2015
+    DOCFILES: "no"
+    SRCFILES: "no"
   <<: *historicdefinition
 test:historic:2015:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:TL2015-historic
   needs: ["build:historic:2015"]
   <<: *testdefinition
-
+build:historic:2015-doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2015
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2015-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2015
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2015-doc-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2015
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 build:historic:2014:
   stage: build
   variables:
     CURRENTRELEASE: 2014
+    DOCFILES: "no"
+    SRCFILES: "no"
   <<: *historicdefinition
 test:historic:2014:
   stage: test
   image: registry.gitlab.com/islandoftex/images/texlive:TL2014-historic
   needs: ["build:historic:2014"]
   <<: *testdefinition
+build:historic:2014-doc:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2014
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2014-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2014
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2014-doc-src:
+  stage: extrabuild
+  needs: ["build:baseimage"]
+  variables:
+    CURRENTRELEASE: 2014
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 
 .build:historic:2013:
   stage: build

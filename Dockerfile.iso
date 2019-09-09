@@ -1,0 +1,20 @@
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+
+# the TeX Live release (year)
+ARG CURRENTRELEASE
+# the iso name on the server
+ARG ISONAME=texlive.iso
+
+# set the current release for all TL installation scripts using
+# this image
+ENV CURRENTRELEASE=$CURRENTRELEASE
+
+# download and save ISO
+RUN echo "Downloading ISO for historic TeX Live $CURRENTRELEASE" && \
+  cd /tmp/ && \
+  wget -nv $TLHISTMIRRORURL/$CURRENTRELEASE/$ISONAME && \ 
+  echo "Extracting iso" && \
+  mkdir /iso && \
+  # extract image content into /iso
+  xorriso -osirrox on -indev ./texlive.iso -extract / /iso && \
+  rm -rf texlive.iso

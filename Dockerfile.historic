@@ -1,25 +1,17 @@
-FROM registry.gitlab.com/islandoftex/images/texlive:base
-
-# the TeX Live release (year)
 ARG CURRENTRELEASE
+FROM registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-iso
+
 # whether to install documentation and/or source files
 # this has to be yes or no
 ARG DOCFILES=no
 ARG SRCFILES=no
-# the iso name on the server
-ARG ISONAME=texlive.iso
 
 RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
   echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES"
 
 # install Vanilla TeX Live
-RUN cd /tmp/ && \
-  echo "Downloading TL iso" && \
-  wget -nv $TLHISTMIRRORURL/$CURRENTRELEASE/$ISONAME && \ 
-  echo "Extracting iso" && \
-  # extract image content into /mnt
-  xorriso -osirrox on -indev ./texlive.iso -extract / /mnt && \
+RUN cd /iso/ && \
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \ 
   # … but disable documentation and source files when asked to stay slim
@@ -32,10 +24,8 @@ RUN cd /tmp/ && \
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
   # start installation
-  cd /mnt/ && \ 
-  ./install-tl -profile /tmp/install.profile && \ 
-  cd /tmp/ && rm -rf /mnt/* && \ 
-  rm -rf texlive.iso
+  ./install-tl -profile install.profile && \ 
+  cd / && rm -rf /iso
 
 # add all relevant binaries to the PATH
 ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \

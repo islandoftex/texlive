@@ -43,6 +43,11 @@ that worked, e.g. `TL2019-2019-08-01-08-14`.
 
 ## Historic releases
 
+> The historic releases are currently unavailable due to shortcomings of the CI
+> builds. There are some images available but it may take a while until we have
+> the oportunity to complete the repository. Rebuilds are currently not
+> scheduled.
+
 We are maintaining images for historic releases from 2014 on. If you need an
 image for an older TeX Live feel free to file a feature request. We might
 consider adding older distributions if there is a user base.

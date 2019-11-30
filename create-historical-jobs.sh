@@ -12,6 +12,7 @@ build:iso:$year:
     CURRENTRELEASE: $year
   <<: *isodefinition
 build:historic:$year:
+  needs: ["build:iso:$year"]
   variables:
     CURRENTRELEASE: $year
     DOCFILES: "no"

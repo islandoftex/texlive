@@ -18,7 +18,7 @@ stages:
 .testtemplate: &testdefinition
   stage: test
   script:
-    - arara -lv test.tex
+    - arara -l -v test.tex
 
 build:baseimage:
   stage: baseimage
@@ -105,6 +105,7 @@ build:iso:2018:
     CURRENTRELEASE: 2018
   <<: *isodefinition
 build:historic:2018:
+  needs: ["build:iso:2018"]
   variables:
     CURRENTRELEASE: 2018
     DOCFILES: "no"
@@ -142,6 +143,7 @@ build:iso:2017:
     CURRENTRELEASE: 2017
   <<: *isodefinition
 build:historic:2017:
+  needs: ["build:iso:2017"]
   variables:
     CURRENTRELEASE: 2017
     DOCFILES: "no"
@@ -179,6 +181,7 @@ build:iso:2016:
     CURRENTRELEASE: 2016
   <<: *isodefinition
 build:historic:2016:
+  needs: ["build:iso:2016"]
   variables:
     CURRENTRELEASE: 2016
     DOCFILES: "no"
@@ -216,6 +219,7 @@ build:iso:2015:
     CURRENTRELEASE: 2015
   <<: *isodefinition
 build:historic:2015:
+  needs: ["build:iso:2015"]
   variables:
     CURRENTRELEASE: 2015
     DOCFILES: "no"
@@ -253,6 +257,7 @@ build:iso:2014:
     CURRENTRELEASE: 2014
   <<: *isodefinition
 build:historic:2014:
+  needs: ["build:iso:2014"]
   variables:
     CURRENTRELEASE: 2014
     DOCFILES: "no"

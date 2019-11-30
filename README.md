@@ -43,10 +43,9 @@ that worked, e.g. `TL2019-2019-08-01-08-14`.
 
 ## Historic releases
 
-> The historic releases are currently unavailable due to shortcomings of the CI
-> builds. There are some images available but it may take a while until we have
-> the oportunity to complete the repository. Rebuilds are currently not
-> scheduled.
+> The historic releases are currently not rebuilt monthly due to some connection
+> limits the servers impose on us. The images are available in a truly
+> historical fashion, though.
 
 We are maintaining images for historic releases from 2014 on. If you need an
 image for an older TeX Live feel free to file a feature request. We might
@@ -59,7 +58,6 @@ Historic releases are tagged as `TL{YEAR}-historic`, so you could pull for 2018
 *Concerning the word historic*:
 Be aware that we will only have one tag associated with one historic release.
 That does *not* mean that the images behind that tag will not change. Quite the
-opposite: Every time we rebuild our main image (`latest`) the historic images
-will be rebuilt and updated if there are updates for the underlying operating
-system image available. That way we make sure not to ship all too outdated
-software.
+opposite: Every month, the historic images will be rebuilt and updated if there
+are updates for the underlying operating system image available. That way we
+make sure not to ship all too outdated software.

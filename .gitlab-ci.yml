@@ -35,7 +35,6 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker pull $RELEASE_IMAGE:$IMAGETAG || true
     - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
     - docker push $RELEASE_IMAGE:latest$SUFFIX
@@ -82,8 +81,7 @@ build:latest:docsrc:
   script:
     - IMAGETAG="TL$CURRENTRELEASE-historic-iso"
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
-    - docker pull $RELEASE_IMAGE:$IMAGETAG || true
-    - docker build --cache-from $RELEASE_IMAGE:$IMAGETAG -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
+    - docker build -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
     - docker push $RELEASE_IMAGE:$IMAGETAG
   only:
     variables:
@@ -96,8 +94,7 @@ build:latest:docsrc:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
-    - docker pull $RELEASE_IMAGE:$IMAGETAG || true
-    - docker build --cache-from $RELEASE_IMAGE:$IMAGETAG -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
   only:
     variables:

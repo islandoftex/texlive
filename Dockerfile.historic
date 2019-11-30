@@ -36,5 +36,5 @@ ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
 RUN latex --version && echo "\n" && \ 
   python --version && echo "\n" && \ 
   pygmentize -V && \ 
-  if [ "$DOCFILES" = "yes" ]; then texdoc -l -M geometry; fi && \
-  if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi
+  if [ "$DOCFILES" = "yes" ]; then echo "x" | texdoc -l geometry; fi && \
+  if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi

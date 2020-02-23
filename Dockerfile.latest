@@ -5,11 +5,10 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 ARG DOCFILES=no
 ARG SRCFILES=no
 
-RUN echo "Building with documentation: $DOCFILES" && \
-  echo "Building with sources: $SRCFILES"
-
 # install Vanilla TeX Live
-RUN wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
+RUN echo "Building with documentation: $DOCFILES" && \
+  echo "Building with sources: $SRCFILES" && \
+  wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
   tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz && \ 
   cd install-tl* && \ 
   # choose complete installation

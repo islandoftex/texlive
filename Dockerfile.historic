@@ -6,12 +6,11 @@ FROM registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-i
 ARG DOCFILES=no
 ARG SRCFILES=no
 
+# install Vanilla TeX Live
 RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
   echo "Building with documentation: $DOCFILES" && \
-  echo "Building with sources: $SRCFILES"
-
-# install Vanilla TeX Live
-RUN cd /iso/ && \
+  echo "Building with sources: $SRCFILES" && \
+  cd /iso/ && \
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \ 
   # … but disable documentation and source files when asked to stay slim

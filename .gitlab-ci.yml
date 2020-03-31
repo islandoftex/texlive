@@ -44,7 +44,7 @@ build:baseimage:
 
 build:latest:
   variables:
-    CURRENTRELEASE: 2019
+    CURRENTRELEASE: 2020
     DOCFILES: "no"
     SRCFILES: "no"
   <<: *latestdefinition
@@ -58,19 +58,19 @@ test:latest:
       - $LATESTRELEASES == "true"
 build:latest:doc:
   variables:
-    CURRENTRELEASE: 2019
+    CURRENTRELEASE: 2020
     DOCFILES: "yes"
     SRCFILES: "no"
   <<: *latestdefinition
 build:latest:src:
   variables:
-    CURRENTRELEASE: 2019
+    CURRENTRELEASE: 2020
     DOCFILES: "no"
     SRCFILES: "yes"
   <<: *latestdefinition
 build:latest:docsrc:
   variables:
-    CURRENTRELEASE: 2019
+    CURRENTRELEASE: 2020
     DOCFILES: "yes"
     SRCFILES: "yes"
   <<: *latestdefinition
@@ -100,6 +100,44 @@ build:latest:docsrc:
     variables:
       - $HISTORICALRELEASES == "true"
 
+build:iso:2019:
+  variables:
+    CURRENTRELEASE: 2019
+  <<: *isodefinition
+build:historic:2019:
+  needs: ["build:iso:2019"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "no"
+    SRCFILES: "no"
+  <<: *historicdefinition
+test:historic:2019:
+  image: $RELEASE_IMAGE:TL2019-historic
+  <<: *testdefinition
+  only:
+    variables:
+      - $HISTORICALRELEASES == "true"
+build:historic:2019-doc:
+  needs: ["build:iso:2019"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "yes"
+    SRCFILES: "no"
+  <<: *historicdefinition
+build:historic:2019-src:
+  needs: ["build:iso:2019"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "no"
+    SRCFILES: "yes"
+  <<: *historicdefinition
+build:historic:2019-doc-src:
+  needs: ["build:iso:2019"]
+  variables:
+    CURRENTRELEASE: 2019
+    DOCFILES: "yes"
+    SRCFILES: "yes"
+  <<: *historicdefinition
 build:iso:2018:
   variables:
     CURRENTRELEASE: 2018

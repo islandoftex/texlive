@@ -21,9 +21,7 @@ build:historic:$year:
 test:historic:$year:
   image: \\$RELEASE_IMAGE:TL$year-historic
   <<: *testdefinition
-  only:
-    variables:
-      - \\$HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:$year-doc:
   needs: ["build:iso:$year"]
   variables:

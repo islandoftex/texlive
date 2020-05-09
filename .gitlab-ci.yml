@@ -27,6 +27,17 @@ build:baseimage:
     - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - docker push $RELEASE_IMAGE:base
 
+.latestruletemplate: &latestruledefinition
+  rules:
+    - if: '$LATESTRELEASES == "true"'
+      when: always
+    - when: never
+.historicalruletemplate: &historicalruledefinition
+  rules:
+    - if: '$HISTORICALRELEASES == "true"'
+      when: always
+    - when: never
+
 .latesttemplate: &latestdefinition
   <<: *builddefinition
   stage: build
@@ -38,9 +49,7 @@ build:baseimage:
     - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
     - docker push $RELEASE_IMAGE:latest$SUFFIX
-  only:
-    variables:
-      - $LATESTRELEASES == "true"
+  <<: *latestruledefinition
 
 build:latest:
   variables:
@@ -53,9 +62,7 @@ test:latest:
   image: $RELEASE_IMAGE:latest
   needs: ["build:latest"]
   <<: *testdefinition
-  only:
-    variables:
-      - $LATESTRELEASES == "true"
+  <<: *latestruledefinition
 build:latest:doc:
   variables:
     CURRENTRELEASE: 2020
@@ -83,9 +90,7 @@ build:latest:docsrc:
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
     - docker build -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
     - docker push $RELEASE_IMAGE:$IMAGETAG
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 
 .historictemplate: &historicdefinition
   <<: *builddefinition
@@ -96,9 +101,7 @@ build:latest:docsrc:
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
     - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 
 build:iso:2019:
   variables:
@@ -114,9 +117,7 @@ build:historic:2019:
 test:historic:2019:
   image: $RELEASE_IMAGE:TL2019-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2019-doc:
   needs: ["build:iso:2019"]
   variables:
@@ -152,9 +153,7 @@ build:historic:2018:
 test:historic:2018:
   image: $RELEASE_IMAGE:TL2018-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2018-doc:
   needs: ["build:iso:2018"]
   variables:
@@ -190,9 +189,7 @@ build:historic:2017:
 test:historic:2017:
   image: $RELEASE_IMAGE:TL2017-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2017-doc:
   needs: ["build:iso:2017"]
   variables:
@@ -228,9 +225,7 @@ build:historic:2016:
 test:historic:2016:
   image: $RELEASE_IMAGE:TL2016-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2016-doc:
   needs: ["build:iso:2016"]
   variables:
@@ -266,9 +261,7 @@ build:historic:2015:
 test:historic:2015:
   image: $RELEASE_IMAGE:TL2015-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2015-doc:
   needs: ["build:iso:2015"]
   variables:
@@ -304,9 +297,7 @@ build:historic:2014:
 test:historic:2014:
   image: $RELEASE_IMAGE:TL2014-historic
   <<: *testdefinition
-  only:
-    variables:
-      - $HISTORICALRELEASES == "true"
+  <<: *historicalruledefinition
 build:historic:2014-doc:
   needs: ["build:iso:2014"]
   variables:

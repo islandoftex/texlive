@@ -7,7 +7,7 @@ stages:
   - build
   - test
 
-.buildtemplate: &builddefinition
+.buildtemplate:
   image: docker:latest
   services:
     - docker:dind
@@ -15,31 +15,31 @@ stages:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker info
 
-.testtemplate: &testdefinition
+.testtemplate:
   stage: test
   script:
     - arara -l -v test.tex
 
 build:baseimage:
   stage: baseimage
-  <<: *builddefinition
+  extends: .buildtemplate
   script:
     - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - docker push $RELEASE_IMAGE:base
 
-.latestruletemplate: &latestruledefinition
+.latestruletemplate:
   rules:
     - if: '$LATESTRELEASES == "true"'
       when: always
     - when: never
-.historicalruletemplate: &historicalruledefinition
+.historicalruletemplate:
   rules:
     - if: '$HISTORICALRELEASES == "true"'
       when: always
     - when: never
 
-.latesttemplate: &latestdefinition
-  <<: *builddefinition
+.latesttemplate:
+  extends: [.buildtemplate, .latestruletemplate]
   stage: build
   needs: ["build:baseimage"]
   script:
@@ -49,51 +49,18 @@ build:baseimage:
     - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
     - docker push $RELEASE_IMAGE:latest$SUFFIX
-  <<: *latestruledefinition
 
-build:latest:
-  variables:
-    CURRENTRELEASE: 2020
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *latestdefinition
-test:latest:
-  stage: test
-  image: $RELEASE_IMAGE:latest
-  needs: ["build:latest"]
-  <<: *testdefinition
-  <<: *latestruledefinition
-build:latest:doc:
-  variables:
-    CURRENTRELEASE: 2020
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *latestdefinition
-build:latest:src:
-  variables:
-    CURRENTRELEASE: 2020
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *latestdefinition
-build:latest:docsrc:
-  variables:
-    CURRENTRELEASE: 2020
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *latestdefinition
-
-.isotemplate: &isodefinition
-  <<: *builddefinition
+.isotemplate:
+  extends: [.buildtemplate, .historicalruletemplate]
   stage: iso
   script:
     - IMAGETAG="TL$CURRENTRELEASE-historic-iso"
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
     - docker build -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
     - docker push $RELEASE_IMAGE:$IMAGETAG
-  <<: *historicalruledefinition
 
-.historictemplate: &historicdefinition
-  <<: *builddefinition
+.historictemplate:
+  extends: [.buildtemplate, .historicalruletemplate]
   stage: build
   script:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
@@ -101,252 +68,68 @@ build:latest:docsrc:
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
     - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
-  <<: *historicalruledefinition
 
-build:iso:2019:
-  variables:
-    CURRENTRELEASE: 2019
-  <<: *isodefinition
-build:historic:2019:
-  needs: ["build:iso:2019"]
-  variables:
-    CURRENTRELEASE: 2019
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2019:
-  image: $RELEASE_IMAGE:TL2019-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2019-doc:
-  needs: ["build:iso:2019"]
-  variables:
-    CURRENTRELEASE: 2019
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2019-src:
-  needs: ["build:iso:2019"]
-  variables:
-    CURRENTRELEASE: 2019
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2019-doc-src:
-  needs: ["build:iso:2019"]
-  variables:
-    CURRENTRELEASE: 2019
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:iso:2018:
-  variables:
-    CURRENTRELEASE: 2018
-  <<: *isodefinition
-build:historic:2018:
-  needs: ["build:iso:2018"]
-  variables:
-    CURRENTRELEASE: 2018
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2018:
-  image: $RELEASE_IMAGE:TL2018-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2018-doc:
-  needs: ["build:iso:2018"]
-  variables:
-    CURRENTRELEASE: 2018
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2018-src:
-  needs: ["build:iso:2018"]
-  variables:
-    CURRENTRELEASE: 2018
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2018-doc-src:
-  needs: ["build:iso:2018"]
-  variables:
-    CURRENTRELEASE: 2018
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:iso:2017:
-  variables:
-    CURRENTRELEASE: 2017
-  <<: *isodefinition
-build:historic:2017:
-  needs: ["build:iso:2017"]
-  variables:
-    CURRENTRELEASE: 2017
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2017:
-  image: $RELEASE_IMAGE:TL2017-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2017-doc:
-  needs: ["build:iso:2017"]
-  variables:
-    CURRENTRELEASE: 2017
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2017-src:
-  needs: ["build:iso:2017"]
-  variables:
-    CURRENTRELEASE: 2017
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2017-doc-src:
-  needs: ["build:iso:2017"]
-  variables:
-    CURRENTRELEASE: 2017
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:iso:2016:
-  variables:
-    CURRENTRELEASE: 2016
-  <<: *isodefinition
-build:historic:2016:
-  needs: ["build:iso:2016"]
-  variables:
-    CURRENTRELEASE: 2016
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2016:
-  image: $RELEASE_IMAGE:TL2016-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2016-doc:
-  needs: ["build:iso:2016"]
-  variables:
-    CURRENTRELEASE: 2016
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2016-src:
-  needs: ["build:iso:2016"]
-  variables:
-    CURRENTRELEASE: 2016
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2016-doc-src:
-  needs: ["build:iso:2016"]
-  variables:
-    CURRENTRELEASE: 2016
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:iso:2015:
-  variables:
-    CURRENTRELEASE: 2015
-  <<: *isodefinition
-build:historic:2015:
-  needs: ["build:iso:2015"]
-  variables:
-    CURRENTRELEASE: 2015
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2015:
-  image: $RELEASE_IMAGE:TL2015-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2015-doc:
-  needs: ["build:iso:2015"]
-  variables:
-    CURRENTRELEASE: 2015
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2015-src:
-  needs: ["build:iso:2015"]
-  variables:
-    CURRENTRELEASE: 2015
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2015-doc-src:
-  needs: ["build:iso:2015"]
-  variables:
-    CURRENTRELEASE: 2015
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:iso:2014:
-  variables:
-    CURRENTRELEASE: 2014
-  <<: *isodefinition
-build:historic:2014:
-  needs: ["build:iso:2014"]
-  variables:
-    CURRENTRELEASE: 2014
-    DOCFILES: "no"
-    SRCFILES: "no"
-  <<: *historicdefinition
-test:historic:2014:
-  image: $RELEASE_IMAGE:TL2014-historic
-  <<: *testdefinition
-  <<: *historicalruledefinition
-build:historic:2014-doc:
-  needs: ["build:iso:2014"]
-  variables:
-    CURRENTRELEASE: 2014
-    DOCFILES: "yes"
-    SRCFILES: "no"
-  <<: *historicdefinition
-build:historic:2014-src:
-  needs: ["build:iso:2014"]
-  variables:
-    CURRENTRELEASE: 2014
-    DOCFILES: "no"
-    SRCFILES: "yes"
-  <<: *historicdefinition
-build:historic:2014-doc-src:
-  needs: ["build:iso:2014"]
-  variables:
-    CURRENTRELEASE: 2014
-    DOCFILES: "yes"
-    SRCFILES: "yes"
-  <<: *historicdefinition
+# build the latest image
+build:latest:
+  extends: .latesttemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2020]
+        DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+test:latest:
+  image: $RELEASE_IMAGE:latest
+  needs: ["build:latest"]
+  extends: [.testtemplate, .latestruletemplate]
 
-.build:iso:2013:
+# NOTE: historic images have to be built in batches (because the server has a rate
+#       limit which we should obey to get the CI passing)
+# build historic images between 2018 and 2019 (inclusive)
+build:iso:18to19:
+  extends: .isotemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2018, 2019]
+        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
+build:historic:18to19:
+  extends: .historictemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2018, 2019]
+        DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+
+# build historic images between 2014 and 2017 (inclusive)
+build:iso:14to17:
+  extends: .isotemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
+        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
+build:historic:14to17:
+  extends: .historictemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
+        DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+
+# test all previously built historic releases by running our test definition
+test:historic:
+  image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
+  extends: [.testtemplate, .historicalruletemplate]
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2014, 2015, 2016, 2017, 2018, 2019]
+        TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
+
+# currently, we do not build these but 2008–2013 require us to set the ISONAME
+# so this is included as an example
+.build:prehistoric-iso:
+  extends: .isotemplate
   variables:
-    CURRENTRELEASE: 2013
-    ISONAME: "texlive2013.iso"
-  <<: *isodefinition
-.build:iso:2012:
-  variables:
-    CURRENTRELEASE: 2012
-    ISONAME: "texlive2012.iso"
-  <<: *isodefinition
-.build:iso:2011:
-  variables:
-    CURRENTRELEASE: 2011
-    ISONAME: "texlive2011.iso"
-  <<: *isodefinition
-.build:iso:2010:
-  variables:
-    CURRENTRELEASE: 2010
-    ISONAME: "texlive2010.iso"
-  <<: *isodefinition
-.build:iso:2009:
-  variables:
-    CURRENTRELEASE: 2009
-    ISONAME: "texlive2009.iso"
-  <<: *isodefinition
-.build:iso:2008:
-  variables:
-    CURRENTRELEASE: 2008
-    ISONAME: "texlive2008.iso"
-  <<: *isodefinition
+    ISONAME: texlive$CURRENTRELEASE.iso
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2008, 2009, 2010, 2011, 2012, 2013]
+        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list

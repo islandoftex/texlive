@@ -32,16 +32,10 @@ build:baseimage:
     - if: '$LATESTRELEASES == "true"'
       when: always
     - when: never
-.historicalruletemplate:
-  rules:
-    - if: '$HISTORICALRELEASES == "true"'
-      when: always
-    - when: never
 
 .latesttemplate:
   extends: [.buildtemplate, .latestruletemplate]
   stage: build
-  needs: ["build:baseimage"]
   script:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
@@ -51,7 +45,7 @@ build:baseimage:
     - docker push $RELEASE_IMAGE:latest$SUFFIX
 
 .isotemplate:
-  extends: [.buildtemplate, .historicalruletemplate]
+  extends: .buildtemplate
   stage: iso
   script:
     - IMAGETAG="TL$CURRENTRELEASE-historic-iso"
@@ -60,7 +54,7 @@ build:baseimage:
     - docker push $RELEASE_IMAGE:$IMAGETAG
 
 .historictemplate:
-  extends: [.buildtemplate, .historicalruletemplate]
+  extends: .buildtemplate
   stage: build
   script:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
@@ -85,12 +79,17 @@ test:latest:
 # NOTE: historic images have to be built in batches (because the server has a rate
 #       limit which we should obey to get the CI passing)
 # build historic images between 2018 and 2019 (inclusive)
+# this is batch ii (two)
 build:iso:18to19:
   extends: .isotemplate
   parallel:
     matrix:
       - CURRENTRELEASE: [2018, 2019]
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
+  rules:
+    - if: '$HISTORICALBATCHII == "true"'
+      when: always
+    - when: never
 build:historic:18to19:
   extends: .historictemplate
   parallel:
@@ -98,14 +97,34 @@ build:historic:18to19:
       - CURRENTRELEASE: [2018, 2019]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
+  rules:
+    - if: '$HISTORICALBATCHII == "true"'
+      when: always
+    - when: never
+test:historic:18to19:
+  image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
+  extends: .testtemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2018, 2019]
+        TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
+  rules:
+    - if: '$HISTORICALBATCHII == "true"'
+      when: always
+    - when: never
 
 # build historic images between 2014 and 2017 (inclusive)
+# this is batch i (one)
 build:iso:14to17:
   extends: .isotemplate
   parallel:
     matrix:
       - CURRENTRELEASE: [2014, 2015, 2016, 2017]
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
+  rules:
+    - if: '$HISTORICALBATCHI == "true"'
+      when: always
+    - when: never
 build:historic:14to17:
   extends: .historictemplate
   parallel:
@@ -113,15 +132,21 @@ build:historic:14to17:
       - CURRENTRELEASE: [2014, 2015, 2016, 2017]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
-
-# test all previously built historic releases by running our test definition
-test:historic:
+  rules:
+    - if: '$HISTORICALBATCHI == "true"'
+      when: always
+    - when: never
+test:historic:14to17:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
-  extends: [.testtemplate, .historicalruletemplate]
+  extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2014, 2015, 2016, 2017, 2018, 2019]
+      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
+  rules:
+    - if: '$HISTORICALBATCHI == "true"'
+      when: always
+    - when: never
 
 # currently, we do not build these but 2008–2013 require us to set the ISONAME
 # so this is included as an example

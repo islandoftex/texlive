@@ -43,10 +43,6 @@ that worked, e.g. `TL2019-2019-08-01-08-14`.
 
 ## Historic releases
 
-> The historic releases are currently not rebuilt monthly due to some connection
-> limits the servers impose on us. The images are available in a truly
-> historical fashion, though.
-
 We are maintaining images for historic releases from 2014 on. If you need an
 image for an older TeX Live feel free to file a feature request. We might
 consider adding older distributions if there is a user base.

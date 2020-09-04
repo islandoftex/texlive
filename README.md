@@ -57,3 +57,9 @@ That does *not* mean that the images behind that tag will not change. Quite the
 opposite: Every month, the historic images will be rebuilt and updated if there
 are updates for the underlying operating system image available. That way we
 make sure not to ship all too outdated software.
+
+## Licensing
+
+The software in terms of the MIT license are the Dockerfiles and test files
+provided. This does not include the pre-built Docker images we provide. They
+follow the redistribution conditions of the bundled software.

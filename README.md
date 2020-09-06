@@ -16,6 +16,9 @@ and use
 
 or any other tag.
 
+For some tutorials on using these images within a Docker workflow, have a look
+at the posts listed on our [wiki page](https://gitlab.com/islandoftex/images/texlive/-/wikis/home).
+
 ## Flavors we provide
 
 For every release `X` (e.g. `latest`) we are providing the following flavors:

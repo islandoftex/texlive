@@ -27,6 +27,8 @@ RUN echo "Building with documentation: $DOCFILES" && \
 
 # add all relevant binaries to the PATH
 RUN `find /usr/local/texlive -name tlmgr` path add
+# set TEXMF variable for ConTeXt
+ENV TEXMF=`kpsewhich --var-value TEXMFDIST`
 
 # test the installation
 RUN latex --version && echo "\n" && \ 

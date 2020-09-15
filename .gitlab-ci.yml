@@ -19,6 +19,7 @@ stages:
   stage: test
   script:
     - arara -l -v test.tex
+    - context test.mkiv
 
 build:baseimage:
   stage: baseimage

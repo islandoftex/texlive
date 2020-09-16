@@ -28,7 +28,7 @@ RUN echo "Building with documentation: $DOCFILES" && \
 # add all relevant binaries to the PATH
 RUN `find /usr/local/texlive -name tlmgr` path add
 # set TEXMF variable for ConTeXt
-ENV TEXMF="$(kpsewhich --var-value TEXMFDIST)"
+RUN echo "export TEXMF=`kpsewhich --var-value TEXMFDIST`" >> /etc/profile.d/texmf.sh
 
 # test the installation
 RUN latex --version && echo "\n" && \ 
@@ -39,3 +39,5 @@ RUN latex --version && echo "\n" && \
   pygmentize -V && echo "\n" && \ 
   if [ "$DOCFILES" = "yes" ]; then texdoc -lI geometry; fi && \
   if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi
+
+ENTRYPOINT ["/bin/bash", "--login"]

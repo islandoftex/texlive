@@ -26,11 +26,10 @@ RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
   ./install-tl -profile install.profile && \ 
   cd / && rm -rf /iso
 
-# add all relevant binaries to the PATH and set TEXMF for ConTeXt
+# add all relevant binaries to the PATH
 ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
     MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \ 
-    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH \ 
-    TEXMF=/usr/local/texlive/$CURRENTRELEASE/texmf-dist
+    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
 
 # test the installation
 RUN latex --version && echo "\n" && \ 

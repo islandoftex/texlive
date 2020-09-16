@@ -27,6 +27,10 @@ build:baseimage:
   script:
     - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - docker push $RELEASE_IMAGE:base
+  rules:
+    - if: '$SKIPBASEIMAGE != "true"'
+      when: always
+    - when: never
 
 .latestruletemplate:
   rules:

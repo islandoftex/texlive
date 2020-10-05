@@ -9,6 +9,9 @@ ARG SRCFILES=no
 RUN echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
+  wget $TLMIRRORURL/install-tl-unx.tar.gz.sha512 && \ 
+  sha512sum -c install-tl-unx.tar.gz.sha512 && \ 
+  rm install-tl-unx.tar.gz.sha512 && \ 
   tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz && \ 
   cd install-tl* && \ 
   # choose complete installation

@@ -1,7 +1,7 @@
 # We choose a Debian base image instead of Alpine as there are binareies
 # (e.g. biber) which are not distributed for the Linux/MUSL platform (at least
 # not via default TeX Live)
-FROM debian:testing 
+FROM gitlab.com/islandoftex/dependency_proxy/containers/debian:testing
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \ 

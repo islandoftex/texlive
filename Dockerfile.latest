@@ -5,15 +5,22 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 ARG DOCFILES=no
 ARG SRCFILES=no
 
-# install Vanilla TeX Live
+# verify vanilla TeX Live installer
 RUN echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
   wget $TLMIRRORURL/install-tl-unx.tar.gz.sha512 && \ 
+  wget $TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc && \ 
+  wget https://tug.org/texlive/files/texlive.asc && \ 
+  gpg --import texlive.asc && \ 
+  gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \ 
   sha512sum -c install-tl-unx.tar.gz.sha512 && \ 
-  rm install-tl-unx.tar.gz.sha512 && \ 
-  tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz && \ 
-  cd install-tl* && \ 
+  rm install-tl-unx.tar.gz.sha512* && \ 
+  rm texlive.asc && \ 
+  tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz
+
+# actually install TeX Live
+RUN cd install-tl* && \ 
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \ 
   # … but disable documentation and source files when asked to stay slim

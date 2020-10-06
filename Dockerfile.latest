@@ -17,6 +17,7 @@ RUN echo "Building with documentation: $DOCFILES" && \
   sha512sum -c install-tl-unx.tar.gz.sha512 && \ 
   rm install-tl-unx.tar.gz.sha512* && \ 
   rm texlive.asc && \ 
+  rm /root/.gnupg && \
   tar xzf install-tl-unx.tar.gz && rm install-tl-unx.tar.gz
 
 # actually install TeX Live

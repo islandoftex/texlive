@@ -12,29 +12,29 @@ RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
   echo "Building with sources: $SRCFILES" && \
   cd /iso/ && \
   # choose complete installation
-  echo "selected_scheme scheme-full" > install.profile && \ 
+  echo "selected_scheme scheme-full" > install.profile && \
   # … but disable documentation and source files when asked to stay slim
-  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
-    echo "BUILD: Disabling documentation files"; fi && \ 
-  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \ 
+  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \
+    echo "BUILD: Disabling documentation files"; fi && \
+  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
     echo "BUILD: Disabling source files"; fi && \
-  echo "tlpdbopt_autobackup 0" >> install.profile && \ 
+  echo "tlpdbopt_autobackup 0" >> install.profile && \
   # furthermore we want our symlinks in the system binary folder to avoid
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
   # start installation
-  ./install-tl -profile install.profile && \ 
+  ./install-tl -profile install.profile && \
   cd / && rm -rf /iso
 
 # add all relevant binaries to the PATH and set TEXMF for ConTeXt
 ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
-    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \ 
-    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH \ 
+    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \
+    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH \
     TEXMF=/usr/local/texlive/$CURRENTRELEASE/texmf-dist
 
 # test the installation
-RUN latex --version && echo "\n" && \ 
-  python --version && echo "\n" && \ 
-  pygmentize -V && \ 
+RUN latex --version && printf '\n' && \
+  python --version && printf '\n' && \
+  pygmentize -V && \
   if [ "$DOCFILES" = "yes" ]; then echo "x" | texdoc -l geometry; fi && \
   if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi

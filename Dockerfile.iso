@@ -11,10 +11,9 @@ ENV CURRENTRELEASE=$CURRENTRELEASE
 
 # download and save ISO
 RUN echo "Downloading ISO for historic TeX Live $CURRENTRELEASE" && \
-  cd /tmp/ && \
-  rsync -zL $TLHISTMIRRORURL/$CURRENTRELEASE/$ISONAME ./$ISONAME && \ 
+  rsync -zL "$TLHISTMIRRORURL/$CURRENTRELEASE/$ISONAME" "/tmp/$ISONAME" && \
   echo "Extracting iso" && \
   mkdir /iso && \
   # extract image content into /iso
-  xorriso -osirrox on -indev ./$ISONAME -extract / /iso && \
-  rm -rf ./$ISONAME
+  xorriso -osirrox on -indev "/tmp/$ISONAME" -extract / /iso && \
+  rm -rf "/tmp/$ISONAME"

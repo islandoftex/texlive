@@ -40,12 +40,12 @@ RUN echo "Building with documentation: $DOCFILES" && \
   # set TEXMF variable for ConTeXt
   echo "export TEXMF=$(kpsewhich --var-value TEXMFDIST)" >> /etc/profile.d/texmf.sh && \
   # create an entrypoint script to respect the environment variables
-  printf '#!/bin/bash\n\
-    . /etc/profile\n\
-    if [ %s -eq 0 ]; then\n\
-        set -- /bin/bash\n\
-    fi\n\
-    exec "%s"\n' "$#" "$@" \
+  printf '#!/bin/bash\
+    . /etc/profile;\
+    if [ $# -eq 0 ]; then\
+        set -- /bin/bash;\
+    fi;\
+    exec "$@"\n'\
   >> /entrypoint.sh && chmod +x /entrypoint.sh && \
   # test the installation
   latex --version && printf '\n' && \

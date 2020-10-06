@@ -5,55 +5,55 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 ARG DOCFILES=no
 ARG SRCFILES=no
 
-# verify vanilla TeX Live installer
 RUN echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
-  wget $TLMIRRORURL/install-tl-unx.tar.gz && \ 
-  wget $TLMIRRORURL/install-tl-unx.tar.gz.sha512 && \ 
-  wget $TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc && \ 
-  wget https://tug.org/texlive/files/texlive.asc && \ 
-  gpg --import texlive.asc && \ 
-  gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \ 
-  sha512sum -c install-tl-unx.tar.gz.sha512 && \ 
-  rm install-tl-unx.tar.gz.sha512* && \ 
-  rm texlive.asc && \ 
+  # verify vanilla TeX Live installer
+  wget "$TLMIRRORURL/install-tl-unx.tar.gz" && \
+  wget "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" && \
+  wget "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" && \
+  wget https://tug.org/texlive/files/texlive.asc && \
+  gpg --import texlive.asc && \
+  gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
+  sha512sum -c install-tl-unx.tar.gz.sha512 && \
+  rm install-tl-unx.tar.gz.sha512* && \
+  rm texlive.asc && \
   rm /root/.gnupg && \
-  tar xzf install-tl-unx.tar.gz && \ 
-  rm install-tl-unx.tar.gz && \ 
+  tar xzf install-tl-unx.tar.gz && \
+  rm install-tl-unx.tar.gz && \
   # actually install TeX Live
-  cd install-tl* && \ 
+  cd install-tl* && \
   # choose complete installation
-  echo "selected_scheme scheme-full" > install.profile && \ 
+  echo "selected_scheme scheme-full" > install.profile && \
   # … but disable documentation and source files when asked to stay slim
-  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \ 
-    echo "BUILD: Disabling documentation files"; fi && \ 
-  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \ 
+  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \
+    echo "BUILD: Disabling documentation files"; fi && \
+  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
     echo "BUILD: Disabling source files"; fi && \
-  echo "tlpdbopt_autobackup 0" >> install.profile && \ 
+  echo "tlpdbopt_autobackup 0" >> install.profile && \
   # furthermore we want our symlinks in the system binary folder to avoid
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
-  ./install-tl -profile install.profile && \ 
-  cd .. && rm -rf install-tl* && \ 
+  ./install-tl -profile install.profile && \
+  cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
-  `find /usr/local/texlive -name tlmgr` path add && \
+  $(find /usr/local/texlive -name tlmgr) path add && \
   # set TEXMF variable for ConTeXt
-  echo "export TEXMF=`kpsewhich --var-value TEXMFDIST`" >> /etc/profile.d/texmf.sh && \
+  echo "export TEXMF=$(kpsewhich --var-value TEXMFDIST)" >> /etc/profile.d/texmf.sh && \
   # create an entrypoint script to respect the environment variables
-  echo '#!/bin/bash\n\
+  printf '#!/bin/bash\n\
     . /etc/profile\n\
-    if [ $# -eq 0 ]; then\n\
+    if [ %s -eq 0 ]; then\n\
         set -- /bin/bash\n\
     fi\n\
-    exec "$@"\n'\
+    exec "%s"\n' "$#" "$@" \
   >> /entrypoint.sh && chmod +x /entrypoint.sh && \
-  # test the installation && \
-  latex --version && echo "\n" && \ 
-  biber --version && echo "\n" && \ 
-  xindy --version && echo "\n" && \ 
-  arara --version && echo "\n" && \ 
-  python --version && echo "\n" && \ 
-  pygmentize -V && echo "\n" && \ 
+  # test the installation
+  latex --version && printf '\n' && \
+  biber --version && printf '\n' && \
+  xindy --version && printf '\n' && \
+  arara --version && printf '\n' && \
+  python --version && printf '\n' && \
+  pygmentize -V && printf '\n' && \
   if [ "$DOCFILES" = "yes" ]; then texdoc -lI geometry; fi && \
   if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi
 

@@ -16,6 +16,12 @@ and use
 
 or any other tag.
 
+If you want to pull these images from Docker Hub, simply use
+
+    FROM texlive/texlive:latest
+
+or any other tag.
+
 For some tutorials on using these images within a Docker workflow, have a look
 at the posts listed on our [wiki page](https://gitlab.com/islandoftex/images/texlive/-/wikis/home).
 

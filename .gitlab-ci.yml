@@ -1,6 +1,7 @@
 variables:
   DOCKER_DRIVER: overlay2
   RELEASE_IMAGE: registry.gitlab.com/islandoftex/images/texlive
+  DOCKER_HUB_IMAGE: texlive/texlive
 stages:
   - baseimage
   - iso
@@ -13,6 +14,7 @@ stages:
     - docker:dind
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
     - docker info
 
 .testtemplate:
@@ -45,9 +47,10 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
     - docker push $RELEASE_IMAGE:latest$SUFFIX
+    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
 
 .isotemplate:
   extends: .buildtemplate
@@ -65,8 +68,9 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
-    - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - docker push $RELEASE_IMAGE:$IMAGETAG
+    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
 
 # build the latest image
 build:latest:

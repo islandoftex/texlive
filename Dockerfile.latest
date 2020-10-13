@@ -37,16 +37,6 @@ RUN echo "Building with documentation: $DOCFILES" && \
   cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
   $(find /usr/local/texlive -name tlmgr) path add && \
-  # set TEXMF variable for ConTeXt
-  echo "export TEXMF=$(kpsewhich --var-value TEXMFDIST)" >> /etc/profile.d/texmf.sh && \
-  # create an entrypoint script to respect the environment variables
-  printf '#!/bin/bash\n\
-    . /etc/profile\n\
-    if [ $# -eq 0 ]; then\n\
-        set -- /bin/bash\n\
-    fi\n\
-    exec "$@"\n'\
-  >> /entrypoint.sh && chmod +x /entrypoint.sh && \
   # test the installation
   latex --version && printf '\n' && \
   biber --version && printf '\n' && \
@@ -56,5 +46,3 @@ RUN echo "Building with documentation: $DOCFILES" && \
   pygmentize -V && printf '\n' && \
   if [ "$DOCFILES" = "yes" ]; then texdoc -lI geometry; fi && \
   if [ "$SRCFILES" = "yes" ]; then kpsewhich latexbug.dtx; fi
-
-ENTRYPOINT ["/entrypoint.sh"]

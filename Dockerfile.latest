@@ -5,6 +5,29 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 ARG DOCFILES=no
 ARG SRCFILES=no
 
+RUN apt-get update && \
+  # Mark all texlive packages as installed. This enables installing latex-related packges in child images.
+  # Inspired by https://tex.stackexchange.com/a/95373/9075.
+  apt install -qy equivs --no-install-recommends freeglut3 && \
+  mkdir -p /tmp/tl-equivs && \
+  # we need to change into tl-equis to get it working
+  cd /tmp/tl-equivs && \
+  wget -q -O texlive-local http://www.tug.org/texlive/files/debian-equivs-2020-ex.txt && \
+  YEAR=`date +"%Y"` && \
+  sed -i "s/2020/$YEAR/" texlive-local && \
+  equivs-build texlive-local && \
+  dpkg -i "texlive-local_$YEAR-1_all.deb" && \
+  apt install -qyf && \
+  # reverse the cd command from above and cleanup
+  cd .. && \
+  rm -rf /tmp/tl-equivs && \
+  # save some space
+  apt remove -y --purge equivs freeglut3 && \
+  apt-get autoremove -qy --purge && \
+  rm -rf /var/lib/apt/lists/* && \
+  apt-get clean && \
+  rm -rf /var/cache/apt/
+
 RUN echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   # verify vanilla TeX Live installer
@@ -36,7 +59,9 @@ RUN echo "Building with documentation: $DOCFILES" && \
   ./install-tl -profile install.profile && \
   cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
-  $(find /usr/local/texlive -name tlmgr) path add && \
+  $(find /usr/local/texlive -name tlmgr) path add
+
+RUN \
   # test the installation
   latex --version && printf '\n' && \
   biber --version && printf '\n' && \

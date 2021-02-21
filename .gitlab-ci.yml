@@ -32,14 +32,10 @@ build:baseimage:
     - docker push $RELEASE_IMAGE:base
   rules:
     - if: '$SKIPBASEIMAGE != "true"'
-      when: always
-    - when: never
 
 .latestruletemplate:
   rules:
     - if: '$LATESTRELEASES == "true"'
-      when: always
-    - when: never
 
 .latesttemplate:
   extends: [.buildtemplate, .latestruletemplate]
@@ -111,8 +107,6 @@ build:iso:18to19:
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-      when: always
-    - when: never
 build:historic:18to19:
   extends: .historictemplate
   parallel:
@@ -122,8 +116,6 @@ build:historic:18to19:
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-      when: always
-    - when: never
 test:historic:18to19:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
@@ -168,8 +160,6 @@ test:historic:14to17:
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHI == "true"'
-      when: always
-    - when: never
 
 # currently, we do not build these but 2008–2013 require us to set the ISONAME
 # so this is included as an example

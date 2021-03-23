@@ -44,7 +44,7 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi

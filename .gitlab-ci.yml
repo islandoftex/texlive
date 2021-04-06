@@ -74,7 +74,7 @@ build:latest:
   extends: .latesttemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2020]
+      - CURRENTRELEASE: [2021]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
 build:latest-with-cache:
@@ -97,13 +97,13 @@ test:latest:
 
 # NOTE: historic images have to be built in batches (because the server has a rate
 #       limit which we should obey to get the CI passing)
-# build historic images between 2018 and 2019 (inclusive)
+# build historic images between 2018 and 2020 (inclusive)
 # this is batch ii (two)
-build:iso:18to19:
+build:iso:18to20:
   extends: .isotemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019]
+      - CURRENTRELEASE: [2018, 2019, 2020]
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'

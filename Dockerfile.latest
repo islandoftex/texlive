@@ -12,10 +12,10 @@ RUN apt-get update && \
   mkdir -p /tmp/tl-equivs && \
   # we need to change into tl-equis to get it working
   cd /tmp/tl-equivs && \
-  wget -q -O texlive-local http://www.tug.org/texlive/files/debian-equivs-2020-ex.txt && \
-  sed -i "s/2020/9999/" texlive-local && \
+  wget -q -O texlive-local http://www.tug.org/texlive/files/debian-equivs-2021-ex.txt && \
+  sed -i "s/2021/9999/" texlive-local && \
   equivs-build texlive-local && \
-  dpkg -i texlive-local_9999-?_all.deb && \
+  dpkg -i texlive-local_9999.99999999-1_all.deb && \
   apt install -qyf && \
   # reverse the cd command from above and cleanup
   cd .. && \

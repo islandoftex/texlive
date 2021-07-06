@@ -107,21 +107,21 @@ build:iso:18to20:
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-build:historic:18to19:
+build:historic:18to20:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019]
+      - CURRENTRELEASE: [2018, 2019, 2020]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-test:historic:18to19:
+test:historic:18to20:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019]
+      - CURRENTRELEASE: [2018, 2019, 2020]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'

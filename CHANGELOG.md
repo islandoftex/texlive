@@ -6,6 +6,9 @@
 
 * Use multi-stage build for historic images to exclude the ISO image from
   layering, thus reducing the image size a bit.
+* The experimental `-with-cache` images have been removed. The font cache will
+  now be generated for each `latest` image by default.
+  (see #3)
 
 ### 2022-02
 

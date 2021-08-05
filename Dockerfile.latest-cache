@@ -1,5 +1,0 @@
-ARG IMAGESUFFIX
-FROM registry.gitlab.com/islandoftex/images/texlive:latest$IMAGESUFFIX
-
-RUN luaotfload-tool -u
-RUN mtxrun --generate

@@ -4,6 +4,7 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 # this has to be yes or no
 ARG DOCFILES=no
 ARG SRCFILES=no
+ARG GENERATE_CACHES=yes
 
 RUN apt-get update && \
   # Mark all texlive packages as installed. This enables installing latex-related packges in child images.
@@ -58,7 +59,10 @@ RUN echo "Building with documentation: $DOCFILES" && \
   ./install-tl -profile install.profile && \
   cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
-  $(find /usr/local/texlive -name tlmgr) path add
+  $(find /usr/local/texlive -name tlmgr) path add && \
+  # pregenerate caches as per #3; overhead is < 5 MB which does not really
+  # matter for images in the sizes of GBs
+  if [ "$GENERATE_CACHES" = "yes" ]; then luaotfload-tool -u && mtxrun --generate; fi
 
 RUN \
   # test the installation

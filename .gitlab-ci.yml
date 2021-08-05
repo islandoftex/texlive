@@ -115,19 +115,6 @@ build:latest:
       - CURRENTRELEASE: [2021]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
-build:latest-with-cache:
-  extends: [.buildtemplate, .latestruletemplate]
-  stage: cache
-  script:
-    - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
-    - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
-    - docker build -f Dockerfile.latest-cache --tag $RELEASE_IMAGE:latest$SUFFIX-with-cache --tag $DOCKER_HUB_IMAGE:latest$SUFFIX-with-cache --build-arg IMAGESUFFIX=$SUFFIX .
-    - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX-with-cache; fi
-    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX-with-cache; fi
-  parallel:
-    matrix:
-      - DOCFILES: ["yes", "no"]
-        SRCFILES: ["yes", "no"]
 test:latest:
   image: $RELEASE_IMAGE:latest
   needs: ["build:latest"]

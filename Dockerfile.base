@@ -24,6 +24,8 @@ RUN apt-get update && \
   libdigest-perl-md5-perl libncurses5 libncurses6 \
   # for latexindent (see #13)
   libunicode-linebreak-perl libfile-homedir-perl libyaml-tiny-perl \
+  # for eps conversion (see #14)
+  ghostscript \
   # for syntax highlighting
   python3 python3-pygments && \ 
   rm -rf /var/lib/apt/lists/* && \

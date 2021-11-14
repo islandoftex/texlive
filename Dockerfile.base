@@ -26,6 +26,8 @@ RUN apt-get update && \
   libunicode-linebreak-perl libfile-homedir-perl libyaml-tiny-perl \
   # for eps conversion (see #14)
   ghostscript \
+  # for l3build CTAN upload
+  curl \
   # for syntax highlighting
   python3 python3-pygments && \ 
   rm -rf /var/lib/apt/lists/* && \

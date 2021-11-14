@@ -9,6 +9,7 @@
   (see #13)
 * Added `ghostscript` package to allow including eps files.
   (see #14)
+* Added `curl` package to allow CTAN uploads using `l3build`.
 
 ## TeX Live 2020 and before
 

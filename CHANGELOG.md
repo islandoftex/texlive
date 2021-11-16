@@ -10,6 +10,8 @@
 * Added `ghostscript` package to allow including eps files.
   (see #14)
 * Added `curl` package to allow CTAN uploads using `l3build`.
+* Added [trivy](https://github.com/aquasecurity/trivy) scan for the base image
+  to build pipeline.
 
 ## TeX Live 2020 and before
 

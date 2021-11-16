@@ -36,7 +36,7 @@ build:baseimage:
     - if: '$SKIPBASEIMAGE != "true"'
 
 # from https://aquasecurity.github.io/trivy/v0.21.0/advanced/integrations/gitlab-ci/
-container_scanning:
+.container_scanning:
   image:
     name: docker.io/aquasec/trivy:latest
     entrypoint: [""]

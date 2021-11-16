@@ -70,8 +70,6 @@ container_scanning:
     when: always
     reports:
       container_scanning: gl-container-scanning-report.json
-  tags:
-    - docker-runner
 
 .latestruletemplate:
   rules:

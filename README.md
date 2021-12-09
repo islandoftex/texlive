@@ -25,6 +25,10 @@ or any other tag.
 For some tutorials on using these images within a Docker workflow, have a look
 at the posts listed on our [wiki page](https://gitlab.com/islandoftex/images/texlive/-/wikis/home).
 
+> These images are provided by the Island of TeX. Please use the images'
+> [repo](https://gitlab.com/islandoftex/images/texlive) to report issues or
+> feature request. We are not active on the TeX Live mailing list.
+
 ## Flavors we provide
 
 For every release `X` (e.g. `latest`) we are providing the following flavors:

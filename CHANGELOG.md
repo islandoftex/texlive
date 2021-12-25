@@ -2,6 +2,12 @@
 
 ## TeX Live 2021
 
+### 2022-01
+
+* Added `gnuplot-nox` to the base image to allow for gnuplot graphics in
+  `pgfplots` plots.
+  (see !13)
+
 ### 2021-12
 
 * Added `libunicode-linebreak-perl libfile-homedir-perl libyaml-tiny-perl`

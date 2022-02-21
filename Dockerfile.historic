@@ -33,7 +33,7 @@ RUN apt-get update && \
   mkdir -p /tmp/tl-equivs && \
   # we need to change into tl-equis to get it working
   cd /tmp/tl-equivs && \
-  wget -q -O texlive-local http://www.tug.org/texlive/files/debian-equivs-$CURRENTRELEASE-ex.txt && \
+  curl "https://tug.org/texlive/files/debian-equivs-$CURRENTRELEASE-ex.txt" --output texlive-local && \
   equivs-build texlive-local && \
   dpkg -i texlive-local_$CURRENTRELEASE-?_all.deb && \
   apt install -qyf && \

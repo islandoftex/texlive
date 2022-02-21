@@ -2,6 +2,12 @@
 
 ## TeX Live 2021
 
+### 2022-02
+
+* Removed `wget` from the images and use `curl` for downloads. `wget` cannot
+  deal with tug.org's Let's Encrypt certificates, so there is no need to keep
+  it in the image when `curl` is already present.
+
 ### 2022-01
 
 * Added `gnuplot-nox` to the base image to allow for gnuplot graphics in

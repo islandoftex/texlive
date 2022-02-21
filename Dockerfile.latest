@@ -12,7 +12,7 @@ RUN apt-get update && \
   mkdir -p /tmp/tl-equivs && \
   # we need to change into tl-equis to get it working
   cd /tmp/tl-equivs && \
-  wget -q -O texlive-local http://www.tug.org/texlive/files/debian-equivs-2021-ex.txt && \
+  curl https://tug.org/texlive/files/debian-equivs-2021-ex.txt --output texlive-local && \
   sed -i "s/2021/9999/" texlive-local && \
   equivs-build texlive-local && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \
@@ -30,10 +30,10 @@ RUN apt-get update && \
 RUN echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   # verify vanilla TeX Live installer
-  wget "$TLMIRRORURL/install-tl-unx.tar.gz" && \
-  wget "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" && \
-  wget "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" && \
-  wget https://tug.org/texlive/files/texlive.asc && \
+  curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
+  curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" --output install-tl-unx.tar.gz.sha512 && \
+  curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" --output install-tl-unx.tar.gz.sha512.asc && \
+  curl https://tug.org/texlive/files/texlive.asc --output texlive.asc && \
   gpg --import texlive.asc && \
   gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
   sha512sum -c install-tl-unx.tar.gz.sha512 && \

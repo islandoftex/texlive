@@ -4,9 +4,10 @@
 
 ### 2022-02
 
-* Removed `wget` from the images and use `curl` for downloads. `wget` cannot
-  deal with tug.org's Let's Encrypt certificates, so there is no need to keep
-  it in the image when `curl` is already present.
+* Removed `wget` from the latest images and use `curl` for downloads. `wget`
+  cannot deal with tug.org's Let's Encrypt certificates, so there is no need
+  to keep it in the image when `curl` is already present except for the
+  historic images where install-tl relies on it.
 
 ### 2022-01
 

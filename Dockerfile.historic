@@ -1,5 +1,5 @@
 ARG CURRENTRELEASE
-FROM registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-iso
+FROM registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-iso AS builder
 
 # whether to install documentation and/or source files
 # this has to be yes or no
@@ -34,6 +34,15 @@ RUN echo "Building image for historic TeX Live $CURRENTRELEASE" && \
   # start installation
   ./install-tl -profile install.profile && \
   cd / && rm -rf /iso
+
+################################################################################
+# use the smaller base image for the final tree
+################################################################################
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+ARG CURRENTRELEASE
+
+# get the TeX Live installation
+COPY --from=builder /usr/local/texlive /usr/local/texlive
 
 RUN apt-get update && \
   # Mark all texlive packages as installed. This enables installing latex-related packges in child images.

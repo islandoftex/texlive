@@ -2,6 +2,11 @@
 
 ## TeX Live 2021
 
+### 2022-04
+
+* Use multi-stage build for historic images to exclude the ISO image from
+  layering, thus reducing the image size a bit.
+
 ### 2022-02
 
 * Removed `wget` from the latest images and use `curl` for downloads. `wget`

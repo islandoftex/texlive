@@ -1,5 +1,16 @@
 # Changelog for the TeX Live Docker images
 
+## TeX Live 2022
+
+### 2022-04
+
+* `latest` images will now also be provided as
+  `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}` instead of
+  `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}-{HOUR}-{MINUTE}` because we do not build
+  images twice a day except for development purposes where only the last image
+  is meant to be used anyway so there is no need for tagging per minute.
+  (see #8)
+
 ## TeX Live 2021
 
 ### 2022-04

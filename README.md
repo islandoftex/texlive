@@ -49,10 +49,14 @@ Hence, pulling the `latest` image will provide you with an at most one week old
 snapshot of TeX Live including all packages. You can manually update within the
 container by running `tlmgr update --self --all`.
 
-Each of the weekly builds is tagged with `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}-{HOUR}-{MINUTE}`
+Each of the weekly builds is tagged with `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}`
 apart from being `latest` for one week. If you want to have reproducible builds
 or happen to find a regression in a later image you can still revert to a date
-that worked, e.g. `TL2019-2019-08-01-08-14`.
+that worked, e.g. `TL2022-2022-06-05`.
+
+> In releases prior to TL2021, we used
+> `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}-{HOUR}-{MINUTE}` which should be considered
+> when referring to older images by date.
 
 ## Historic releases
 

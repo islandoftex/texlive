@@ -79,13 +79,21 @@ build:baseimage:
   extends: [.buildtemplate, .latestruletemplate]
   stage: build
   script:
+    - apk add --no-cache curl sed
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
+    - IMAGEDATE="`date +%Y-%m-%d-%H-%M`"
+    - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
     - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
+    - curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--`echo $IMAGEDATE | sed 's/-/--/g'`-blue" -o latest.svg
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+      - latest.svg
 
 .isotemplate:
   extends: .buildtemplate

@@ -120,7 +120,7 @@ build:latest:
   extends: .latesttemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2021]
+      - CURRENTRELEASE: [2022]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
 test:latest:
@@ -130,31 +130,31 @@ test:latest:
 
 # NOTE: historic images have to be built in batches (because the server has a rate
 #       limit which we should obey to get the CI passing)
-# build historic images between 2018 and 2020 (inclusive)
+# build historic images between 2018 and 2021 (inclusive)
 # this is batch ii (two)
-build:iso:18to20:
+build:iso:18to21:
   extends: .isotemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020]
+      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-build:historic:18to20:
+build:historic:18to21:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020]
+      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-test:historic:18to20:
+test:historic:18to21:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020]
+      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'

@@ -16,7 +16,7 @@
 * The `base` image (and therefore all `latest` and `historic` images) does not
   ship with the following packages any longer: `xorriso`.
   Furthermore, the following environment variables are not provided anymore:
-  `TLHISTMIRRORURL`
+  `TLHISTMIRRORURL`, `TLMIRRORURL`.
 * `iso` images (which are not meant for public consumption but are available in
   our docker registry) now are based on debian as a prerequisite for a later
   move to alpine for even smaller footprint. As those images are purely used in

@@ -10,9 +10,7 @@ ENV LANG=C.UTF-8 \
     TEXLIVE_INSTALL_NO_CONTEXT_CACHE=1 \ 
     # As we will not install regular documentation why would we want to
     # install perl docs…
-    NOPERLDOC=1 \
-    # To get the latest packages available we always use the root mirror
-    TLMIRRORURL=http://dante.ctan.org/tex-archive/systems/texlive/tlnet
+    NOPERLDOC=1
 
 RUN apt-get update && \ 
   # basic utilities for TeX Live installation

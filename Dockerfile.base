@@ -10,15 +10,13 @@ ENV LANG=C.UTF-8 \
     TEXLIVE_INSTALL_NO_CONTEXT_CACHE=1 \ 
     # As we will not install regular documentation why would we want to
     # install perl docs…
-    NOPERLDOC=1 \ 
-    # The base mirror is one of the mirrors of TUG's historic archive
-    TLHISTMIRRORURL=rsync://texlive.info/historic/systems/texlive \ 
+    NOPERLDOC=1 \
     # To get the latest packages available we always use the root mirror
     TLMIRRORURL=http://dante.ctan.org/tex-archive/systems/texlive/tlnet
 
 RUN apt-get update && \ 
   # basic utilities for TeX Live installation
-  apt-get install -y curl rsync unzip git gpg tar xorriso \ 
+  apt-get install -y curl git gpg rsync tar unzip \ 
   # miscellaneous dependencies for TeX Live tools
   make fontconfig perl default-jre libgetopt-long-descriptive-perl \
   libdigest-perl-md5-perl libncurses5 libncurses6 \

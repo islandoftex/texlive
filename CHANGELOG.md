@@ -2,6 +2,12 @@
 
 ## TeX Live 2022
 
+### 2022-05
+
+* `latest` images now include approx. 20 MB fontconfig cache. This allows
+  XeLaTeX users to load fonts by name more easily.
+  (see #18)
+
 ### 2022-04
 
 * `latest` images will now also be provided as

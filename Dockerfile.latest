@@ -84,9 +84,16 @@ RUN cd install-tl && \
   cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
   $(find /usr/local/texlive -name tlmgr) path add && \
-  # pregenerate caches as per #3; overhead is < 5 MB which does not really
-  # matter for images in the sizes of GBs
-  if [ "$GENERATE_CACHES" = "yes" ]; then luaotfload-tool -u && mtxrun --generate; fi
+  if [ "$GENERATE_CACHES" = "yes" ]; then \
+    # pregenerate caches as per #3; overhead is < 5 MB which does not really
+    # matter for images in the sizes of GBs
+    luaotfload-tool -u && \
+    mtxrun --generate && \
+    # also generate fontconfig cache as per #18 which is approx. 20 MB but
+    # benefits XeLaTeX user to load fonts from the TL tree by font name
+    cp $(find /usr/local/texlive -name texlive-fontconfig.conf) /etc/fonts/conf.d/09-texlive-fonts.conf && \
+    fc-cache -fsv; \
+  fi
 
 WORKDIR /
 RUN \

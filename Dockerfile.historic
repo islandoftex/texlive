@@ -7,9 +7,10 @@ ARG DOCFILES=no
 ARG SRCFILES=no
 
 # install wget dependency needed for TL2018 and prior
-# (install-tl will not use curl if installed)
+# (install-tl will not use curl if installed); perl-doc
+# is required to satisfy Pod::Usage dependency
 RUN apt-get update && \
-  apt install -qy --no-install-recommends wget && \
+  apt install -qy --no-install-recommends wget perl-doc && \
   apt-get autoremove -qy --purge && \
   rm -rf /var/lib/apt/lists/* && \
   apt-get clean && \

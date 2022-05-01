@@ -6,7 +6,7 @@ stages:
   - baseimage
   - iso
   - build
-  - cache
+  - extend
   - test
 
 .buildtemplate:
@@ -118,11 +118,42 @@ build:baseimage:
 # build the latest image
 build:latest:
   extends: .latesttemplate
-  parallel:
-    matrix:
-      - CURRENTRELEASE: [2022]
-        DOCFILES: ["yes", "no"]
-        SRCFILES: ["yes", "no"]
+  variables:
+    CURRENTRELEASE: 2022
+    DOCFILES: "no"
+    SRCFILES: "no"
+build:latest:doc:
+  extends: .latesttemplate
+  variables:
+    CURRENTRELEASE: 2022
+    DOCFILES: "yes"
+    SRCFILES: "no"
+build:latest:src:
+  extends: .latesttemplate
+  variables:
+    CURRENTRELEASE: 2022
+    DOCFILES: "no"
+    SRCFILES: "yes"
+build:latest:doc-on-src:
+  extends: [.buildtemplate, .latestruletemplate]
+  stage: extend
+  variables:
+    CURRENTRELEASE: 2022
+  script:
+    - apk add --no-cache curl sed
+    - SUFFIX="-doc-src"
+    - IMAGEDATE="`date +%Y-%m-%d`"
+    - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
+    - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
+    - docker build -f Dockerfile.latest-doc-src --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES="yes" --build-arg SRCFILES="yes" .
+    - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
+    - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
+    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
+    - curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--`echo $IMAGEDATE | sed 's/-/--/g'`-blue" -o latest.svg
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+      - latest.svg
 test:latest:
   image: $RELEASE_IMAGE:latest
   needs: ["build:latest"]

@@ -1,0 +1,9 @@
+FROM registry.gitlab.com/islandoftex/images/texlive:latest-src
+
+COPY --from=registry.gitlab.com/islandoftex/images/texlive:latest-doc /usr/local/texlive/2022/texmf-dist/doc /usr/local/texlive/2022/texmf-dist/doc
+
+RUN \
+  # test the installation
+  latex --version && printf '\n' && \
+  texdoc -lI geometry; fi && \
+  kpsewhich latexbug.dtx; fi

@@ -4,7 +4,6 @@ variables:
   DOCKER_HUB_IMAGE: texlive/texlive
 stages:
   - baseimage
-  - iso
   - build
   - test
 
@@ -95,15 +94,6 @@ build:baseimage:
     paths:
       - latest.svg
 
-.isotemplate:
-  extends: .buildtemplate
-  stage: iso
-  script:
-    - IMAGETAG="TL$CURRENTRELEASE-historic-iso"
-    - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
-    - docker build --force-rm --no-cache -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
-    - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
-
 .historictemplate:
   extends: .buildtemplate
   stage: build
@@ -133,14 +123,6 @@ test:latest:
 #       limit which we should obey to get the CI passing)
 # build historic images between 2018 and 2021 (inclusive)
 # this is batch ii (two)
-build:iso:18to21:
-  extends: .isotemplate
-  parallel:
-    matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
-        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
-  rules:
-    - if: '$HISTORICALBATCHII == "true"'
 build:historic:19to21:
   extends: .historictemplate
   parallel:
@@ -164,16 +146,6 @@ test:historic:18to21:
 
 # build historic images between 2016 and 2018 (inclusive)
 # this is batch i (one)
-build:iso:14to17:
-  extends: .isotemplate
-  parallel:
-    matrix:
-      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
-        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
-  rules:
-    - if: '$HISTORICALBATCHI == "true"'
-      when: always
-    - when: never
 build:historic:16to18:
   extends: .historictemplate
   parallel:
@@ -194,14 +166,3 @@ test:historic:14to17:
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHI == "true"'
-
-# currently, we do not build these but 2008–2013 require us to set the ISONAME
-# so this is included as an example
-.build:prehistoric-iso:
-  extends: .isotemplate
-  variables:
-    ISONAME: texlive$CURRENTRELEASE.iso
-  parallel:
-    matrix:
-      - CURRENTRELEASE: [2008, 2009, 2010, 2011, 2012, 2013]
-        ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list

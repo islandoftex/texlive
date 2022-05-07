@@ -30,7 +30,7 @@ build:baseimage:
   stage: baseimage
   extends: .buildtemplate
   script:
-    - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
+    - docker build --force-rm --no-cache -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:base; fi
   rules:
     - if: '$SKIPBASEIMAGE != "true"'
@@ -85,7 +85,7 @@ build:baseimage:
     - IMAGEDATE="`date +%Y-%m-%d`"
     - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker build -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build --force-rm --no-cache -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
@@ -101,7 +101,7 @@ build:baseimage:
   script:
     - IMAGETAG="TL$CURRENTRELEASE-historic-iso"
     - if [ -z "$ISONAME" ]; then export ISONAME=texlive.iso; fi
-    - docker build -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
+    - docker build --force-rm --no-cache -f Dockerfile.iso --tag $RELEASE_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg ISONAME=$ISONAME .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
 
 .historictemplate:
@@ -111,7 +111,7 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
-    - docker build -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - docker build --force-rm --no-cache -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi
 
@@ -145,7 +145,7 @@ build:latest:doc-on-src:
     - IMAGEDATE="`date +%Y-%m-%d`"
     - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker build -f Dockerfile.latest-doc-src --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES="yes" --build-arg SRCFILES="yes" .
+    - docker build --force-rm --no-cache -f Dockerfile.latest-doc-src --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES="yes" --build-arg SRCFILES="yes" .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi

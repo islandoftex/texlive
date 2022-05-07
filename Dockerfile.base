@@ -14,7 +14,7 @@ ENV LANG=C.UTF-8 \
 
 RUN apt-get update && \ 
   # basic utilities for TeX Live installation
-  apt-get install -y curl git gpg rsync tar unzip \ 
+  apt-get install -qy --no-install-recommends curl git gpg rsync tar unzip \ 
   # miscellaneous dependencies for TeX Live tools
   make fontconfig perl default-jre libgetopt-long-descriptive-perl \
   libdigest-perl-md5-perl libncurses5 libncurses6 \

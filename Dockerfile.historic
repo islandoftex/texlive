@@ -54,7 +54,7 @@ RUN apt-get update && \
   cd /tmp/tl-equivs && \
   curl "https://tug.org/texlive/files/debian-equivs-$CURRENTRELEASE-ex.txt" --output texlive-local && \
   equivs-build texlive-local && \
-  dpkg -i texlive-local_$CURRENTRELEASE-?_all.deb && \
+  dpkg -i texlive-local_$CURRENTRELEASE*.deb && \
   apt install -qyf && \
   # reverse the cd command from above and cleanup
   cd .. && \

@@ -84,7 +84,8 @@ build:baseimage:
     - IMAGEDATE="`date +%Y-%m-%d`"
     - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
-    - docker build --force-rm --no-cache -f Dockerfile.latest --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - TLMIRRORURL=http://dante.ctan.org/tex-archive/systems/texlive/tlnet
+    - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
@@ -110,7 +111,8 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
-    - docker build --force-rm --no-cache -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES .
+    - TLMIRRORURL=ftp://tug.org/historic/systems/texlive/$CURRENTRELEASE/tlnet-final
+    - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi
 
@@ -139,11 +141,11 @@ build:iso:18to21:
         ISOBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-build:historic:18to21:
+build:historic:19to21:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
+      - CURRENTRELEASE: [2019, 2020, 2021]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -153,14 +155,14 @@ test:historic:18to21:
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2018, 2019, 2020, 2021]
+      - CURRENTRELEASE: [2019, 2020, 2021]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
       when: always
     - when: never
 
-# build historic images between 2014 and 2017 (inclusive)
+# build historic images between 2016 and 2018 (inclusive)
 # this is batch i (one)
 build:iso:14to17:
   extends: .isotemplate
@@ -172,11 +174,11 @@ build:iso:14to17:
     - if: '$HISTORICALBATCHI == "true"'
       when: always
     - when: never
-build:historic:14to17:
+build:historic:16to18:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
+      - CURRENTRELEASE: [2016, 2017, 2018]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -188,7 +190,7 @@ test:historic:14to17:
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2014, 2015, 2016, 2017]
+      - CURRENTRELEASE: [2016, 2017, 2018]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHI == "true"'

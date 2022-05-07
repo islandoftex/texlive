@@ -5,12 +5,13 @@ FROM alpine:latest AS downloader
 ARG DOCFILES=no
 ARG SRCFILES=no
 
+# the mirror from which we will download TeX Live
+ARG TLMIRRORURL
+
 RUN apk add --no-cache ca-certificates curl gpg gpg-agent sed tar
 
 # use a working directory to collect downloaded artifacts
 WORKDIR /texlive
-# to get the latest packages available we always use the root mirror
-ENV TLMIRRORURL=http://dante.ctan.org/tex-archive/systems/texlive/tlnet
 
 # download and verify TL installer before extracting archive
 RUN curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
@@ -53,6 +54,10 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 # this has to be yes or no
 ARG DOCFILES=no
 ARG SRCFILES=no
+
+# the mirror from which we will download TeX Live
+ARG TLMIRRORURL
+
 ARG GENERATE_CACHES=yes
 
 COPY --from=downloader /texlive/texlive-local /tmp/texlive-local
@@ -80,7 +85,7 @@ COPY --from=downloader /texlive/install.profile /tmp/install-tl/install.profile
 
 # actually install TeX Live
 RUN cd install-tl && \
-  ./install-tl -profile install.profile && \
+  ./install-tl -profile install.profile -repository "$TLMIRRORURL" && \
   cd .. && rm -rf install-tl* && \
   # add all relevant binaries to the PATH
   $(find /usr/local/texlive -name tlmgr) path add && \

@@ -15,15 +15,23 @@ WORKDIR /texlive
 
 # download and verify TL installer before extracting archive
 RUN curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
-  curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" --output install-tl-unx.tar.gz.sha512 && \
-  curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" --output install-tl-unx.tar.gz.sha512.asc && \
-  curl https://tug.org/texlive/files/texlive.asc --output texlive.asc && \
-  gpg --import texlive.asc && \
-  gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
-  sha512sum -c install-tl-unx.tar.gz.sha512 && \
-  rm install-tl-unx.tar.gz.sha512* && \
-  rm texlive.asc && \
-  rm -rf /root/.gnupg && \
+  # TeX Live before and including 2015 used sha256 instead of
+  # sha512, so we always try to fall back to the former if the
+  # latter fails
+  (curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" --output install-tl-unx.tar.gz.sha512 || \
+  curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha256" --output install-tl-unx.tar.gz.sha256) && \
+  if [ -f "install-tl-unx.tar.gz.sha512" ]; then \
+    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" --output install-tl-unx.tar.gz.sha512.asc && \
+    curl https://tug.org/texlive/files/texlive.asc --output texlive.asc && \
+    gpg --import texlive.asc && \
+    gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
+    sha512sum -c install-tl-unx.tar.gz.sha512 && \
+    rm texlive.asc && \
+    rm -rf /root/.gnupg; \
+  else \
+    sha256sum -c install-tl-unx.tar.gz.sha256; \
+  fi && \
+  rm install-tl-unx.tar.gz.sha* && \
   tar xzf install-tl-unx.tar.gz && \
   rm install-tl-unx.tar.gz && \
   mv install-tl-* install-tl

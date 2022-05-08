@@ -172,25 +172,23 @@ test:historic:16to18:
 
 # build historic images between 2013 and 2015 (inclusive)
 # this is batch iii (three)
-# currently only builds 2015 because we cannot use the net
-# installer for 2013 and 2014
-.build:historic:13to15:
+build:historic:13to15:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2015]
+      - CURRENTRELEASE: [2013, 2014, 2015]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHIII == "true"'
       when: always
     - when: never
-.test:historic:13to15:
+test:historic:13to15:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2015]
+      - CURRENTRELEASE: [2013, 2014, 2015]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHIII == "true"'

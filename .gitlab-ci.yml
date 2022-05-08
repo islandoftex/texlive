@@ -101,6 +101,9 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
+    # we randomly chose one of the mirrors from https://tug.org/historic/
+    # to serve the historic TeX Live sources; the master has strong rate
+    # limits
     - TLMIRRORURL=https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/$CURRENTRELEASE/tlnet-final
     - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
@@ -132,7 +135,7 @@ build:historic:19to21:
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHII == "true"'
-test:historic:18to21:
+test:historic:19to21:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
@@ -157,7 +160,7 @@ build:historic:16to18:
     - if: '$HISTORICALBATCHI == "true"'
       when: always
     - when: never
-test:historic:14to17:
+test:historic:16to18:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:

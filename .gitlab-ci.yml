@@ -174,7 +174,7 @@ test:historic:16to18:
 # this is batch iii (three)
 # currently only builds 2015 because we cannot use the net
 # installer for 2013 and 2014
-build:historic:13to15:
+.build:historic:13to15:
   extends: .historictemplate
   parallel:
     matrix:
@@ -185,7 +185,7 @@ build:historic:13to15:
     - if: '$HISTORICALBATCHIII == "true"'
       when: always
     - when: never
-test:historic:13to15:
+.test:historic:13to15:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:

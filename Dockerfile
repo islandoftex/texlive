@@ -53,8 +53,8 @@ RUN echo "Building with documentation: $DOCFILES" && \
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile
 
 # download equivs file for dummy package
-RUN curl https://tug.org/texlive/files/debian-equivs-2021-ex.txt --output texlive-local && \
-  sed -i "s/2021/9999/" texlive-local
+RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
+  sed -i "s/2022/9999/" texlive-local
 
 FROM registry.gitlab.com/islandoftex/images/texlive:base
 
@@ -72,7 +72,8 @@ COPY --from=downloader /texlive/texlive-local /tmp/texlive-local
 
 WORKDIR /tmp
 RUN apt-get update && \
-  # Mark all texlive packages as installed. This enables installing latex-related packges in child images.
+  # Mark all texlive packages as installed. This enables installing
+  # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.
   apt install -qy --no-install-recommends equivs freeglut3 && \
   # we need to change into tl-equis to get it working

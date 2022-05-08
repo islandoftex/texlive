@@ -8,6 +8,10 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
+# the current release needed to determine which way to
+# verify files
+ARG CURRENTRELEASE
+
 RUN apk add --no-cache ca-certificates curl gpg gpg-agent sed tar
 
 # use a working directory to collect downloaded artifacts

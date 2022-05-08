@@ -68,6 +68,10 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
+# the current release needed to determine which way to
+# verify files
+ARG CURRENTRELEASE
+
 ARG GENERATE_CACHES=yes
 
 COPY --from=downloader /texlive/texlive-local /tmp/texlive-local
@@ -97,21 +101,28 @@ COPY --from=downloader /texlive/install.profile /tmp/install-tl/install.profile
 # actually install TeX Live
 RUN cd install-tl && \
   ./install-tl -profile install.profile -repository "$TLMIRRORURL" && \
-  cd .. && rm -rf install-tl* && \
-  # add all relevant binaries to the PATH
-  $(find /usr/local/texlive -name tlmgr) path add && \
-  if [ "$GENERATE_CACHES" = "yes" ]; then \
-    # pregenerate caches as per #3; overhead is < 5 MB which does not really
+  cd .. && rm -rf install-tl*
+
+# add all relevant binaries to the PATH and set TEXMF for ConTeXt
+ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
+    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \
+    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
+
+WORKDIR /
+RUN # pregenerate caches as per #3; overhead is < 5 MB which does not really
     # matter for images in the sizes of GBs
+  if [ "$GENERATE_CACHES" = "yes" ]; then \
+    echo "Generating caches"
     luaotfload-tool -u && \
     mtxrun --generate && \
     # also generate fontconfig cache as per #18 which is approx. 20 MB but
     # benefits XeLaTeX user to load fonts from the TL tree by font name
     cp $(find /usr/local/texlive -name texlive-fontconfig.conf) /etc/fonts/conf.d/09-texlive-fonts.conf && \
     fc-cache -fsv; \
+  else \
+    echo "Not generating caches"; \
   fi
 
-WORKDIR /
 RUN \
   # test the installation
   latex --version && printf '\n' && \

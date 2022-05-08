@@ -7,6 +7,8 @@
 * `latest` images now include approx. 20 MB fontconfig cache. This allows
   XeLaTeX users to load fonts by name more easily.
   (see #18)
+* The `base` image (and therefore all `latest` and `historic` images) does not
+  ship with the following packages any longer: `tar`, `rsync`.
 
 *Notes for developers using our image pipeline:*
 

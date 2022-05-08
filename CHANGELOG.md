@@ -9,6 +9,7 @@
   (see #18)
 * The `base` image (and therefore all `latest` and `historic` images) does not
   ship with the following packages any longer: `gpg`, `tar`, `rsync`.
+* Readded `wget` to all images because historic build rely on it.
 
 *Notes for developers using our image pipeline:*
 

@@ -104,7 +104,7 @@ build:baseimage:
     # we randomly chose one of the mirrors from https://tug.org/historic/
     # to serve the historic TeX Live sources; the master has strong rate
     # limits
-    - TLMIRRORURL=https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/$CURRENTRELEASE/tlnet-final
+    - TLMIRRORURL=ftp://ftp.math.utah.edu/pub/tex/historic/systems/texlive/$CURRENTRELEASE/tlnet-final
     - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi

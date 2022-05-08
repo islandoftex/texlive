@@ -8,6 +8,11 @@
   XeLaTeX users to load fonts by name more easily.
   (see #18)
 
+*Notes for developers using our image pipeline:*
+
+* The `iso` images have been dropped in favor of using the net installer for
+  historic releases as well.
+
 ### 2022-04
 
 * `latest` images will now also be provided as

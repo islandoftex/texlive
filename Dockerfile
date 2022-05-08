@@ -81,13 +81,13 @@ RUN apt-get update && \
   # Mark all texlive packages as installed. This enables installing
   # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.
-  apt install -qy --no-install-recommends equivs freeglut3 && \
+  apt-get install -qy --no-install-recommends equivs freeglut3 && \
   # we need to change into tl-equis to get it working
   equivs-build texlive-local && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \
   apt install -qyf && \
   # reverse the cd command from above and cleanup
-  rm -rf * && \
+  rm -rf ./* && \
   # save some space
   apt remove -y --purge equivs && \
   apt-get autoremove -qy --purge && \
@@ -118,7 +118,7 @@ RUN echo "Set PATH to $PATH" && \
     mtxrun --generate && \
     # also generate fontconfig cache as per #18 which is approx. 20 MB but
     # benefits XeLaTeX user to load fonts from the TL tree by font name
-    cp $(find /usr/local/texlive -name texlive-fontconfig.conf) /etc/fonts/conf.d/09-texlive-fonts.conf && \
+    cp "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf && \
     fc-cache -fsv; \
   else \
     echo "Not generating caches"; \

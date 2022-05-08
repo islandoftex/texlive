@@ -122,10 +122,10 @@ test:latest:
   needs: ["build:latest"]
   extends: [.testtemplate, .latestruletemplate]
 
-# NOTE: historic images have to be built in batches (because the server has a rate
-#       limit which we should obey to get the CI passing)
-# build historic images between 2018 and 2021 (inclusive)
-# this is batch ii (two)
+# NOTE: historic images have to be built in batches (because the server has a
+#       rate limit which we should obey to get the CI passing)
+# build historic images between 2019 and 2021 (inclusive)
+# this is batch i (one)
 build:historic:19to21:
   extends: .historictemplate
   parallel:
@@ -134,7 +134,7 @@ build:historic:19to21:
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
-    - if: '$HISTORICALBATCHII == "true"'
+    - if: '$HISTORICALBATCHI == "true"'
 test:historic:19to21:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
@@ -143,12 +143,12 @@ test:historic:19to21:
       - CURRENTRELEASE: [2019, 2020, 2021]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
-    - if: '$HISTORICALBATCHII == "true"'
+    - if: '$HISTORICALBATCHI == "true"'
       when: always
     - when: never
 
 # build historic images between 2016 and 2018 (inclusive)
-# this is batch i (one)
+# this is batch ii (two)
 build:historic:16to18:
   extends: .historictemplate
   parallel:
@@ -157,7 +157,7 @@ build:historic:16to18:
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
-    - if: '$HISTORICALBATCHI == "true"'
+    - if: '$HISTORICALBATCHII == "true"'
       when: always
     - when: never
 test:historic:16to18:
@@ -168,4 +168,27 @@ test:historic:16to18:
       - CURRENTRELEASE: [2016, 2017, 2018]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
-    - if: '$HISTORICALBATCHI == "true"'
+    - if: '$HISTORICALBATCHII == "true"'
+
+# build historic images between 2013 and 2015 (inclusive)
+# this is batch iii (three)
+build:historic:13to15:
+  extends: .historictemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2013, 2014, 2015]
+        DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+  rules:
+    - if: '$HISTORICALBATCHIII == "true"'
+      when: always
+    - when: never
+test:historic:16to18:
+  image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
+  extends: .testtemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2013, 2014, 2015]
+        TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
+  rules:
+    - if: '$HISTORICALBATCHIII == "true"'

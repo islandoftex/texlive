@@ -109,10 +109,11 @@ ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
     INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
 
 WORKDIR /
-RUN # pregenerate caches as per #3; overhead is < 5 MB which does not really
-    # matter for images in the sizes of GBs
+RUN echo "Set PATH to $PATH" && \
+  # pregenerate caches as per #3; overhead is < 5 MB which does not really
+  # matter for images in the sizes of GBs
   if [ "$GENERATE_CACHES" = "yes" ]; then \
-    echo "Generating caches"
+    echo "Generating caches" && \
     luaotfload-tool -u && \
     mtxrun --generate && \
     # also generate fontconfig cache as per #18 which is approx. 20 MB but

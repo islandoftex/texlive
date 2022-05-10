@@ -18,7 +18,8 @@ RUN apk add --no-cache ca-certificates curl gpg gpg-agent sed tar
 WORKDIR /texlive
 
 # download and verify TL installer before extracting archive
-RUN curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
+RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
+  curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
   # TeX Live before 2016 used sha256 instead of sha512
   if [ "$CURRENTRELEASE" -lt "2016" ]; then \
     curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha256" --output install-tl-unx.tar.gz.sha256 && \

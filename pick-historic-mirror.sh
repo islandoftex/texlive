@@ -11,7 +11,8 @@ SECURE_MIRRORS=(
   https://mirrors.tuna.tsinghua.edu.cn/tex-historic-archive/
   https://mirror.nju.edu.cn/tex-historic/
 )
-INSECURE_MIRRORS=(  # Installers for TL <= 2016 cannot use HTTPS.
+# Installers for TL <= 2016 cannot use HTTPS.
+INSECURE_MIRRORS=(
   ftp://ftp.math.utah.edu/pub/tex/historic/
   ftp://ftp.tu-chemnitz.de/pub/tug/historic/
 )
@@ -36,7 +37,7 @@ else
   MIRRORS=( "${INSECURE_MIRRORS[@]}" )
 fi
 
-MIRROR_INDEX=$((YEAR % ${#SECURE_MIRRORS[@]}))
+MIRROR_INDEX=$((YEAR % ${#MIRRORS[@]}))
 MIRROR="${MIRRORS[$MIRROR_INDEX]}"
 
 echo "$MIRROR"

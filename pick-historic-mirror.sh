@@ -18,7 +18,7 @@ INSECURE_MIRRORS=(  # Installers for TL <= 2016 cannot use HTTPS.
 
 if (( $# != 1 ))
 then
-  printf 'Usage: %s YEAR\n' "$0"
+  printf 'Usage: %s YEAR\n' "$0" >&2
   exit 1
 fi
 

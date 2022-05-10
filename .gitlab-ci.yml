@@ -98,6 +98,7 @@ build:baseimage:
   extends: .buildtemplate
   stage: build
   script:
+    - apk add --no-cache bash
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"

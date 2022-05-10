@@ -24,6 +24,11 @@ fi
 
 YEAR="$1"
 
+if [[ ! $YEAR =~ ^[0-9]{4}$ ]]; then
+    printf 'Invalid year: %s. Expected four digits.\n' "$YEAR" >&2
+    exit 2
+fi
+
 if (( YEAR > 2016 ))
 then
   MIRRORS=( "${SECURE_MIRRORS[@]}" )

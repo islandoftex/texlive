@@ -2,7 +2,8 @@
 
 set -e
 
-# See https://tug.org/historic/ for a list of mirrors.
+# The lists of historic TeX mirrors below have last been updated on
+# 2022-05-10 from <https://tug.org/historic/>.
 SECURE_MIRRORS=(
   https://ftp.math.utah.edu/pub/tex/historic/
   https://ftp.tu-chemnitz.de/pub/tug/historic/
@@ -10,9 +11,7 @@ SECURE_MIRRORS=(
   https://mirrors.tuna.tsinghua.edu.cn/tex-historic-archive/
   https://mirror.nju.edu.cn/tex-historic/
 )
-
-# Installers for TeX Live 2016 and earlier cannot use HTTPS.
-INSECURE_MIRRORS=(
+INSECURE_MIRRORS=(  # Installers for TL <= 2016 cannot use HTTPS.
   ftp://ftp.math.utah.edu/pub/tex/historic/
   ftp://ftp.tu-chemnitz.de/pub/tug/historic/
 )

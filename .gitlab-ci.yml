@@ -101,10 +101,7 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic$SUFFIX"
-    # we randomly chose one of the mirrors from https://tug.org/historic/
-    # to serve the historic TeX Live sources; the master has strong rate
-    # limits
-    - TLMIRRORURL=ftp://ftp.math.utah.edu/pub/tex/historic/systems/texlive/$CURRENTRELEASE/tlnet-final
+    - TLMIRRORURL="`./pick-historic-mirror.sh $CURRENTRELEASE`"/systems/texlive/$CURRENTRELEASE/tlnet-final
     - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi
@@ -124,71 +121,71 @@ test:latest:
 
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)
-# build historic images between 2019 and 2021 (inclusive)
+# build historic images between 2017 and 2021 (inclusive)
 # this is batch i (one)
-build:historic:19to21:
+build:historic:17to21:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2019, 2020, 2021]
+      - CURRENTRELEASE: [2017, 2018, 2019, 2020, 2021]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHI == "true"'
-test:historic:19to21:
+test:historic:17to21:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2019, 2020, 2021]
+      - CURRENTRELEASE: [2017, 2018, 2019, 2020, 2021]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHI == "true"'
       when: always
     - when: never
 
-# build historic images between 2016 and 2018 (inclusive)
+# build historic images between 2015 and 2016 (inclusive)
 # this is batch ii (two)
-build:historic:16to18:
+build:historic:15to16:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2016, 2017, 2018]
+      - CURRENTRELEASE: [2015, 2016]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHII == "true"'
       when: always
     - when: never
-test:historic:16to18:
+test:historic:15to16:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2016, 2017, 2018]
+      - CURRENTRELEASE: [2015, 2016]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHII == "true"'
 
-# build historic images between 2013 and 2015 (inclusive)
+# build historic images between 2013 and 2014 (inclusive)
 # this is batch iii (three)
-build:historic:13to15:
+build:historic:13to14:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015]
+      - CURRENTRELEASE: [2013, 2014]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICALBATCHIII == "true"'
       when: always
     - when: never
-test:historic:13to15:
+test:historic:13to14:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015]
+      - CURRENTRELEASE: [2013, 2014]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICALBATCHIII == "true"'

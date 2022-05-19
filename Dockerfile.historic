@@ -1,0 +1,65 @@
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+
+# the current release needed to determine which way to
+# verify files
+ARG CURRENTRELEASE
+# the documentation or source suffix ("-doc" etc.)
+ARG SUFFIX=""
+# whether to create font and ConTeXt caches
+ARG GENERATE_CACHES=yes
+
+WORKDIR /tmp
+RUN apt-get update && \
+  # Mark all texlive packages as installed. This enables installing
+  # latex-related packges in child images.
+  # Inspired by https://tex.stackexchange.com/a/95373/9075.
+  apt-get install -qy --no-install-recommends equivs freeglut3 && \
+  # download equivs file for dummy package
+  curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
+  sed -i "s/2022/9999/" texlive-local && \
+  # we need to change into tl-equis to get it working
+  equivs-build texlive-local && \
+  dpkg -i texlive-local_9999.99999999-1_all.deb && \
+  apt install -qyf && \
+  # reverse the cd command from above and cleanup
+  rm -rf ./* && \
+  # save some space
+  apt remove -y --purge equivs && \
+  apt-get autoremove -qy --purge && \
+  rm -rf /var/lib/apt/lists/* && \
+  apt-get clean && \
+  rm -rf /var/cache/apt/
+
+COPY --from=registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-tree$SUFFIX /usr/local/texlive /usr/local/texlive
+
+# add all relevant binaries to the PATH and set TEXMF for ConTeXt
+ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
+    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \
+    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
+
+WORKDIR /
+RUN echo "Set PATH to $PATH" && \
+  # pregenerate caches as per #3; overhead is < 5 MB which does not really
+  # matter for images in the sizes of GBs
+  if [ "$GENERATE_CACHES" = "yes" ]; then \
+    echo "Generating caches" && \
+    luaotfload-tool -u && \
+    mtxrun --generate && \
+    # also generate fontconfig cache as per #18 which is approx. 20 MB but
+    # benefits XeLaTeX user to load fonts from the TL tree by font name
+    cp "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf && \
+    fc-cache -fsv; \
+  else \
+    echo "Not generating caches"; \
+  fi
+
+RUN \
+  # test the installation
+  latex --version && printf '\n' && \
+  biber --version && printf '\n' && \
+  xindy --version && printf '\n' && \
+  arara --version && printf '\n' && \
+  python --version && printf '\n' && \
+  pygmentize -V && printf '\n' && \
+  if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
+  if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi

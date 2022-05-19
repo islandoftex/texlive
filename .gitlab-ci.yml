@@ -28,7 +28,7 @@ build:baseimage:
   stage: baseimage
   extends: .buildtemplate
   script:
-    - docker build -f Dockerfile.base --tag $RELEASE_IMAGE:base .
+    - docker build --force-rm --no-cache -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:base; fi
   rules:
     - if: '$SKIPBASEIMAGE != "true"'

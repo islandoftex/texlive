@@ -17,9 +17,6 @@ RUN apk add --no-cache ca-certificates curl gpg gpg-agent sed tar
 # use a working directory to collect downloaded artifacts
 WORKDIR /texlive
 
-# change the argument to invalidate the build cache and force redownloading the installer
-ARG CACHEBUST=1
-
 # download and verify TL installer before extracting archive
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \

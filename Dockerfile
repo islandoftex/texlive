@@ -8,36 +8,14 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
-# the current release needed to determine which way to
-# verify files
-ARG CURRENTRELEASE
-
 RUN apk add --no-cache ca-certificates curl gpg gpg-agent sed tar
 
 # use a working directory to collect downloaded artifacts
 WORKDIR /texlive
 
-# download and verify TL installer before extracting archive
+# download TL installer
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
-  curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
-  # TeX Live before 2016 used sha256 instead of sha512
-  if [ "$CURRENTRELEASE" -lt "2016" ]; then \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha256" --output install-tl-unx.tar.gz.sha256 && \
-    sha256sum -c install-tl-unx.tar.gz.sha256; \
-  else \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" --output install-tl-unx.tar.gz.sha512 && \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" --output install-tl-unx.tar.gz.sha512.asc && \
-    curl https://tug.org/texlive/files/texlive.asc --output texlive.asc && \
-    gpg --import texlive.asc && \
-    gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
-    sha512sum -c install-tl-unx.tar.gz.sha512 && \
-    rm texlive.asc && \
-    rm -rf /root/.gnupg; \
-  fi && \
-  rm install-tl-unx.tar.gz.sha* && \
-  tar xzf install-tl-unx.tar.gz && \
-  rm install-tl-unx.tar.gz && \
-  mv install-tl-* install-tl
+  rsync -a --progress rsync://rsync.dante.ctan.org/CTAN/systems/texlive/tlnet/ .
 
 # create installation profile for full scheme installation with
 # the selected options
@@ -69,8 +47,7 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
-# the current release needed to determine which way to
-# verify files
+# the current release needed to set environmental variables
 ARG CURRENTRELEASE
 
 ARG GENERATE_CACHES=yes

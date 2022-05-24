@@ -1,10 +1,16 @@
-FROM registry.gitlab.com/islandoftex/images/texlive:base
-
 # the current release needed to determine which way to
 # verify files
 ARG CURRENTRELEASE
 # the documentation or source suffix ("-doc" etc.)
 ARG SUFFIX=""
+
+FROM registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-tree$SUFFIX AS tree
+
+FROM registry.gitlab.com/islandoftex/images/texlive:base
+
+# the current release needed to determine which way to
+# verify files
+ARG CURRENTRELEASE
 # whether to create font and ConTeXt caches
 ARG GENERATE_CACHES=yes
 
@@ -30,7 +36,7 @@ RUN apt-get update && \
   apt-get clean && \
   rm -rf /var/cache/apt/
 
-COPY --from=registry.gitlab.com/islandoftex/images/texlive:TL$CURRENTRELEASE-historic-tree$SUFFIX /usr/local/texlive /usr/local/texlive
+COPY --from=tree /usr/local/texlive /usr/local/texlive
 
 # add all relevant binaries to the PATH and set TEXMF for ConTeXt
 ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \

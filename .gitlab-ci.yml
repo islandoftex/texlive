@@ -85,7 +85,7 @@ build:baseimage:
     - IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE$SUFFIX"
     - IMAGETAG="TL$CURRENTRELEASE-`date +%Y-%m-%d-%H-%M`$SUFFIX"
     - TLMIRRORURL=rsync://rsync.dante.ctan.org/CTAN/systems/texlive/tlnet/
-    - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
+    - docker build --force-rm --no-cache -f Dockerfile --tag $RELEASE_IMAGE:$IMAGETAG --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi

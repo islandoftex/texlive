@@ -11,6 +11,7 @@ ARG TLMIRRORURL
 # the current release needed to set environmental variables
 ARG CURRENTRELEASE
 
+# whether to create font and ConTeXt caches
 ARG GENERATE_CACHES=yes
 
 # download equivs file for dummy package

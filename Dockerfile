@@ -8,9 +8,6 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
-# the current release needed to set environmental variables
-ARG CURRENTRELEASE
-
 # whether to create font and ConTeXt caches
 ARG GENERATE_CACHES=yes
 
@@ -64,13 +61,9 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   cd .. && \
   rm -rf texlive
 
-# add all relevant binaries to the PATH and set TEXMF for ConTeXt
-ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
-    MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \
-    INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
-
 WORKDIR /
 RUN echo "Set PATH to $PATH" && \
+  $(find /usr/local/texlive -name tlmgr) path add && \
   # pregenerate caches as per #3; overhead is < 5 MB which does not really
   # matter for images in the sizes of GBs
   if [ "$GENERATE_CACHES" = "yes" ]; then \

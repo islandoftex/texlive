@@ -39,7 +39,7 @@ RUN apt-get update && \
 WORKDIR /tmp
 
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
-  rsync -a --progress rsync://rsync.dante.ctan.org/CTAN/systems/texlive/tlnet/ texlive && \
+  rsync -a --progress "$TLMIRRORURL" texlive && \
   cd texlive && \
   # create installation profile for full scheme installation with
   # the selected options

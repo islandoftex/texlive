@@ -17,39 +17,18 @@ ARG GENERATE_CACHES=yes
 # install required setup dependencies
 RUN apt-get update && \
   apt-get install -qy --no-install-recommends \
-  curl git unzip ca-certificates gpg gpg-agent sed tar \
-  # TL before 2018 needs to have wget installed to successfully
-  # install packages
-  wget
+  rsync gpg gpg-agent sed tar
 
 # use a working directory to collect downloaded artifacts
-WORKDIR /texlive
+WORKDIR /tmp
 
 # download and verify TL installer before extracting archive
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
-  curl "$TLMIRRORURL/install-tl-unx.tar.gz" --output install-tl-unx.tar.gz && \
-  # TeX Live before 2016 used sha256 instead of sha512
-  if [ "$CURRENTRELEASE" -lt "2016" ]; then \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha256" --output install-tl-unx.tar.gz.sha256 && \
-    sha256sum -c install-tl-unx.tar.gz.sha256; \
-  else \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512" --output install-tl-unx.tar.gz.sha512 && \
-    curl "$TLMIRRORURL/install-tl-unx.tar.gz.sha512.asc" --output install-tl-unx.tar.gz.sha512.asc && \
-    curl https://tug.org/texlive/files/texlive.asc --output texlive.asc && \
-    gpg --import texlive.asc && \
-    gpg --verify install-tl-unx.tar.gz.sha512.asc install-tl-unx.tar.gz.sha512 && \
-    sha512sum -c install-tl-unx.tar.gz.sha512 && \
-    rm texlive.asc && \
-    rm -rf /root/.gnupg; \
-  fi && \
-  rm install-tl-unx.tar.gz.sha* && \
-  tar xzf install-tl-unx.tar.gz && \
-  rm install-tl-unx.tar.gz && \
-  mv install-tl-* install-tl
-
-# create installation profile for full scheme installation with
-# the selected options
-RUN echo "Building with documentation: $DOCFILES" && \
+  rsync -a --progress "$TLMIRRORURL" texlive && \
+  cd texlive && \
+  # create installation profile for full scheme installation with
+  # the selected options
+  echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   # choose complete installation
   echo "selected_scheme scheme-full" > install.profile && \
@@ -63,8 +42,9 @@ RUN echo "Building with documentation: $DOCFILES" && \
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
   # actually install TeX Live
-  cd install-tl && \
-  ./install-tl -profile ../install.profile -repository "$TLMIRRORURL"
+  ./install-tl -profile install.profile -repository && \
+  cd .. && \
+  rm -rf texlive
 
 # create data image containing only the TeX Live installation
 FROM scratch

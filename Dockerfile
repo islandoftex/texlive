@@ -25,7 +25,9 @@ RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texliv
   freeglut3 \
   # at this point also install gpg and gpg-agent to allow tlmgr's
   # key subcommand to work correctly (see #21)
-  gpg gpg-agent && \
+  gpg gpg-agent \
+  # we install using rsync so we need to have it installed
+  rsync && \
   # we need to change into tl-equis to get it working
   equivs-build texlive-local && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \

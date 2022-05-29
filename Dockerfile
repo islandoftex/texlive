@@ -42,7 +42,7 @@ RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texliv
   rm -rf /var/cache/apt/
 
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
-  rsync -a --progress "$TLMIRRORURL" texlive && \
+  rsync -a --stats "$TLMIRRORURL" texlive && \
   cd texlive && \
   # create installation profile for full scheme installation with
   # the selected options

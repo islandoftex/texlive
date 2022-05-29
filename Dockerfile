@@ -11,15 +11,16 @@ ARG TLMIRRORURL
 # whether to create font and ConTeXt caches
 ARG GENERATE_CACHES=yes
 
-# download equivs file for dummy package
-RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
-  sed -i "s/2022/9999/" texlive-local
+WORKDIR /tmp
 
-RUN apt-get update && \
+# download and install equivs file for dummy package
+RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
+  sed -i "s/2022/9999/" texlive-local && \
+  apt-get update && \
   # Mark all texlive packages as installed. This enables installing
   # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.
-  apt-get install -qy --no-install-recommends equivs freeglut3 \
+  apt-get install -qy --no-install-recommends equivs \
   # at this point also install gpg and gpg-agent to allow tlmgr's
   # key subcommand to work correctly (see #21)
   gpg gpg-agent && \
@@ -28,15 +29,13 @@ RUN apt-get update && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \
   apt install -qyf && \
   # reverse the cd command from above and cleanup
-  rm -rf ./* && \
+  rm -rf ./*texlive* && \
   # save some space
   apt remove -y --purge equivs && \
   apt-get autoremove -qy --purge && \
   rm -rf /var/lib/apt/lists/* && \
   apt-get clean && \
   rm -rf /var/cache/apt/
-
-WORKDIR /tmp
 
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   rsync -a --progress "$TLMIRRORURL" texlive && \

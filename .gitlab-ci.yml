@@ -30,7 +30,7 @@ build:baseimage:
   script:
     - docker build --force-rm --no-cache -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:base; fi
-    - docker rmi $RELEASE_IMAGE:base
+    - docker rmi $RELEASE_IMAGE:base || true
   rules:
     - if: '$SKIPBASEIMAGE != "true"'
 
@@ -90,7 +90,7 @@ build:baseimage:
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:latest$SUFFIX; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:latest$SUFFIX; fi
     - curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--`echo $IMAGEDATE | sed 's/-/--/g'`-blue" -o latest.svg
-    - docker rmi $RELEASE_IMAGE:$IMAGETAG $RELEASE_IMAGE:latest$SUFFIX $DOCKER_HUB_IMAGE:latest$SUFFIX
+    - docker rmi $RELEASE_IMAGE:$IMAGETAG $RELEASE_IMAGE:latest$SUFFIX $DOCKER_HUB_IMAGE:latest$SUFFIX  || true
   artifacts:
     expire_in: 4 weeks
     paths:
@@ -108,7 +108,7 @@ build:baseimage:
     - docker build --force-rm --no-cache -f Dockerfile.tree --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi
-    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG
+    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG || true
 
 .historictemplate:
   extends: .buildtemplate
@@ -121,7 +121,7 @@ build:baseimage:
     - docker build --force-rm --no-cache -f Dockerfile.historic --tag $RELEASE_IMAGE:$IMAGETAG --tag $DOCKER_HUB_IMAGE:$IMAGETAG --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg SUFFIX=$SUFFIX .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $DOCKER_HUB_IMAGE:$IMAGETAG; fi
-    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG
+    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG || true
 
 # build the latest image
 build:latest:

@@ -4,6 +4,7 @@ FROM registry.gitlab.com/islandoftex/images/texlive:base
 # this has to be yes or no
 ARG DOCFILES=no
 ARG SRCFILES=no
+ARG SCHEME=full
 
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
@@ -49,7 +50,7 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
   # choose complete installation
-  echo "selected_scheme scheme-full" > install.profile && \
+  echo "selected_scheme scheme-$SCHEME" > install.profile && \
   # … but disable documentation and source files when asked to stay slim
   if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \
     echo "BUILD: Disabling documentation files"; fi && \

@@ -2,6 +2,12 @@
 
 ## TeX Live 2022
 
+### 2022-08
+
+* `latest` images are now provided for the `minimal`, `basic`, `small`, and
+  `medium` schemes in addition to the `full` scheme.
+  (see #11)
+
 ### 2022-05
 
 * `latest` images now include approx. 20 MB fontconfig cache. This allows

@@ -49,6 +49,7 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   # the selected options
   echo "Building with documentation: $DOCFILES" && \
   echo "Building with sources: $SRCFILES" && \
+  echo "Building with scheme: $SCHEME" && \
   # choose complete installation
   echo "selected_scheme scheme-$SCHEME" > install.profile && \
   # … but disable documentation and source files when asked to stay slim

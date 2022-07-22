@@ -70,14 +70,15 @@ WORKDIR /
 RUN echo "Set PATH to $PATH" && \
   $(find /usr/local/texlive -name tlmgr) path add && \
   # pregenerate caches as per #3; overhead is < 5 MB which does not really
-  # matter for images in the sizes of GBs
+  # matter for images in the sizes of GBs; some TL schemes might not have
+  # all the tools, therefore failure is allowed
   if [ "$GENERATE_CACHES" = "yes" ]; then \
     echo "Generating caches" && \
-    luaotfload-tool -u && \
-    mtxrun --generate && \
+    (luaotfload-tool -u || true) && \
+    (mtxrun --generate || true) && \
     # also generate fontconfig cache as per #18 which is approx. 20 MB but
     # benefits XeLaTeX user to load fonts from the TL tree by font name
-    cp "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf && \
+    (cp "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf || true) && \
     fc-cache -fsv; \
   else \
     echo "Not generating caches"; \

@@ -85,11 +85,14 @@ RUN echo "Set PATH to $PATH" && \
   fi
 
 RUN \
-  # test the installation
-  latex --version && printf '\n' && \
-  biber --version && printf '\n' && \
-  xindy --version && printf '\n' && \
-  arara --version && printf '\n' && \
+  # test the installation; we only test the full installation because
+  # in that, all tools are present and have to work
+  if [ "$SCHEME" = "full" ]; then \
+    latex --version && printf '\n' && \
+    biber --version && printf '\n' && \
+    xindy --version && printf '\n' && \
+    arara --version && printf '\n';
+  fi && \
   python --version && printf '\n' && \
   pygmentize -V && printf '\n' && \
   if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \

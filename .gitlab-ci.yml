@@ -92,7 +92,11 @@ build:baseimage:
         GL_PUSH_TAGS="$GL_PUSH_TAGS $RELEASE_IMAGE:latest$SUFFIX";
         GH_PUSH_TAGS="$GH_PUSH_TAGS $DOCKER_HUB_IMAGE:latest$SUFFIX";
       fi
-    - docker build --force-rm --no-cache -f Dockerfile $TAGS --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
+    - docker build --force-rm --no-cache -f Dockerfile $TAGS
+        --build-arg DOCFILES=$DOCFILES
+        --build-arg SRCFILES=$SRCFILES
+        --build-arg SCHEME=$SCHEME
+        --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then
         for tag in $GL_PUSH_TAGS; do
           docker push $tag;

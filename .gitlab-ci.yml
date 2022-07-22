@@ -89,8 +89,8 @@ build:baseimage:
     - GH_PUSH_TAGS="$DOCKER_HUB_IMAGE:latest-$SCHEME$SUFFIX"
     - if [ "$SCHEME" = "full" ]; then
         TAGS="$TAGS --tag $RELEASE_IMAGE:latest$SUFFIX --tag $DOCKER_HUB_IMAGE:latest$SUFFIX";
-        GL_PUSH_TAGS="$PUSH_TAGS $RELEASE_IMAGE:latest$SUFFIX";
-        GH_PUSH_TAGS="GH_PUSH_TAGS $DOCKER_HUB_IMAGE:latest$SUFFIX";
+        GL_PUSH_TAGS="$GL_PUSH_TAGS $RELEASE_IMAGE:latest$SUFFIX";
+        GH_PUSH_TAGS="$GH_PUSH_TAGS $DOCKER_HUB_IMAGE:latest$SUFFIX";
       fi
     - docker build --force-rm --no-cache -f Dockerfile $TAGS --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:$IMAGETAG; fi

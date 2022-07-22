@@ -93,8 +93,16 @@ build:baseimage:
         GH_PUSH_TAGS="$GH_PUSH_TAGS $DOCKER_HUB_IMAGE:latest$SUFFIX";
       fi
     - docker build --force-rm --no-cache -f Dockerfile $TAGS --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
-    - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $GL_PUSH_TAGS; fi
-    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $GH_PUSH_TAGS; fi
+    - if [ ! -z "$PUSH_TO_GITLAB" ]; then
+        for tag in $GL_PUSH_TAGS; do
+          docker push $tag;
+        done
+      fi
+    - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then
+        for tag in $GH_PUSH_TAGS; do
+          docker push $tag;
+        done
+      fi
     - curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--`echo $IMAGEDATE | sed 's/-/--/g'`-blue" -o latest.svg
     - docker rmi $GL_PUSH_TAGS $GH_PUSH_TAGS || true
   artifacts:

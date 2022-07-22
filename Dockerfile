@@ -91,7 +91,7 @@ RUN \
     latex --version && printf '\n' && \
     biber --version && printf '\n' && \
     xindy --version && printf '\n' && \
-    arara --version && printf '\n';
+    arara --version && printf '\n'; \
   fi && \
   python --version && printf '\n' && \
   pygmentize -V && printf '\n' && \

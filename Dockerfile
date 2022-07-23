@@ -91,9 +91,9 @@ RUN \
     latex --version && printf '\n' && \
     biber --version && printf '\n' && \
     xindy --version && printf '\n' && \
-    arara --version && printf '\n'; \
+    arara --version && printf '\n'; && \
+    if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
+    if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi \
   fi && \
   python --version && printf '\n' && \
-  pygmentize -V && printf '\n' && \
-  if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
-  if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi
+  pygmentize -V && printf '\n'

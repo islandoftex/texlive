@@ -7,6 +7,8 @@
 * `latest` images are now provided for the `minimal`, `basic`, `small`, and
   `medium` schemes in addition to the `full` scheme.
   (see #11)
+* Added `libsm6` to allow running metafont.
+  (see #24)
 
 ### 2022-05
 

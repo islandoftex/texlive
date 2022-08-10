@@ -30,7 +30,7 @@ build:baseimage:
   script:
     - docker build --force-rm --no-cache -f Dockerfile.base --tag $RELEASE_IMAGE:base .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $RELEASE_IMAGE:base; fi
-    - docker rmi $RELEASE_IMAGE:base || true
+    - docker rmi --no-prune $RELEASE_IMAGE:base || true
   rules:
     - if: '$SKIPBASEIMAGE != "true"'
 
@@ -107,7 +107,7 @@ build:baseimage:
         done
       fi
     - curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--`echo $IMAGEDATE | sed 's/-/--/g'`-blue" -o latest.svg
-    - docker rmi "${GL_PUSH_TAGS[@]}" "${GH_PUSH_TAGS[@]}" || true
+    - docker rmi --no-prune "${TAGS[@]}" || true
   artifacts:
     expire_in: 4 weeks
     paths:
@@ -128,7 +128,7 @@ build:baseimage:
     - docker build --force-rm --no-cache -f Dockerfile.tree "${TAGS[@]/#/--tag }" --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg TLMIRRORURL=$TLMIRRORURL .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $GL_PUSH_TAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $GH_PUSH_TAG; fi
-    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG || true
+    - docker rmi --no-prune "${TAGS[@]}" || true
 
 .historictemplate:
   extends: .buildtemplate
@@ -144,7 +144,7 @@ build:baseimage:
     - docker build --force-rm --no-cache -f Dockerfile.historic "${TAGS[@]/#/--tag }" --build-arg CURRENTRELEASE=$CURRENTRELEASE --build-arg DOCFILES=$DOCFILES --build-arg SRCFILES=$SRCFILES --build-arg SUFFIX=$SUFFIX .
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker push $GL_PUSH_TAG; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker push $GH_PUSH_TAG; fi
-    - docker rmi $RELEASE_IMAGE:$IMAGETAG $DOCKER_HUB_IMAGE:$IMAGETAG || true
+    - docker rmi --no-prune "${TAGS[@]}" || true
 
 # build the latest image
 build:latest:

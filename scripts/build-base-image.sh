@@ -23,4 +23,4 @@ if [[ -n "$PUSH_TO_GITLAB" ]]; then
 fi
 
 # Untag build images, so that the runner can prune them
-docker rmi --no-prune "$TAG" || true
+docker rmi --no-prune "$GL_PUSH_TAG" || true

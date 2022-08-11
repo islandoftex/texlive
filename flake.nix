@@ -23,6 +23,8 @@
             nixpkgs-fmt
             shellcheck
             shfmt
+            # nixpkgs-fmt on other hand also depends on rust
+            cargo
           ];
         };
       }

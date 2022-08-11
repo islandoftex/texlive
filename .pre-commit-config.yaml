@@ -22,6 +22,9 @@ repos:
   rev: v2.10.0
   hooks:
   - id: hadolint
+    # ignore apt version pinning and WORKDIR directory switching
+    # for now as they are not what we would want in our builds
+    args: ['--ignore', 'DL3008', '--ignore', 'DL3003']
 - repo: https://github.com/jumanjihouse/pre-commit-hooks
   rev: 3.0.0
   hooks:

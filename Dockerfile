@@ -32,11 +32,11 @@ RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texliv
   # we need to change into tl-equis to get it working
   equivs-build texlive-local && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \
-  apt install -qyf && \
+  apt-get install -qyf --no-install-recommends && \
   # reverse the cd command from above and cleanup
   rm -rf ./*texlive* && \
   # save some space
-  apt remove -y --purge equivs && \
+  apt-get remove -y --purge equivs && \
   apt-get autoremove -qy --purge && \
   rm -rf /var/lib/apt/lists/* && \
   apt-get clean && \

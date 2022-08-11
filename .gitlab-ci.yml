@@ -14,7 +14,7 @@ pre-commit:
   variables:
     PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
   script:
-    - nix develop --extra-experimental-features "nix-command flakes" --command pre-commit run --all-files
+    - nix develop --extra-experimental-features "nix-command flakes" --command pre-commit run --all-files --show-diff-on-failure
   rules:
     - if: '$CI_PIPELINE_SOURCE != "schedule"'
   cache:

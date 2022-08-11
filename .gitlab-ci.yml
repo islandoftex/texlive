@@ -15,6 +15,9 @@ pre-commit:
     - nix develop --extra-experimental-features "nix-command flakes" --command pre-commit run --from-ref origin/HEAD --to-ref HEAD
   rules:
     - if: '$CI_PIPELINE_SOURCE != "schedule"'
+  cache:
+    paths:
+      - /nix/store/*
 
 .buildtemplate:
   image: docker:latest

@@ -130,7 +130,7 @@ build:baseimage:
     - SUFFIX="`if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi`"
     - SUFFIX="$SUFFIX`if [ "$SRCFILES" = "yes" ]; then echo "-src"; fi`"
     - IMAGETAG="TL$CURRENTRELEASE-historic-tree$SUFFIX"
-    - TLMIRRORURL="`./pick-historic-mirror.sh $CURRENTRELEASE`systems/texlive/$CURRENTRELEASE/tlnet-final"
+    - TLMIRRORURL="`./scripts/pick-historic-mirror.sh $CURRENTRELEASE`systems/texlive/$CURRENTRELEASE/tlnet-final"
     - GL_PUSH_TAG=$RELEASE_IMAGE:$IMAGETAG
     - GH_PUSH_TAG=$DOCKER_HUB_IMAGE:$IMAGETAG
     - TAGS=("$GL_PUSH_TAG" "$GH_PUSH_TAG")

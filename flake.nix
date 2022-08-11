@@ -19,6 +19,7 @@
             # install pre-commit into the shell environment
             pre-commit
             # ... and all its dependencies for the hooks
+            git
             hadolint
             nixpkgs-fmt
             shellcheck

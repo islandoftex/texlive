@@ -3,9 +3,18 @@ variables:
   RELEASE_IMAGE: registry.gitlab.com/islandoftex/images/texlive
   DOCKER_HUB_IMAGE: texlive/texlive
 stages:
+  - file-conformance
   - baseimage
   - build
   - test
+
+pre-commit:
+  stage: file-conformance
+  image: nixos/nix:latest
+  script:
+    - nix develop --extra-experimental-features "nix-command flakes" --command pre-commit run --from-ref origin/HEAD --to-ref HEAD
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "schedule"'
 
 .buildtemplate:
   image: docker:latest

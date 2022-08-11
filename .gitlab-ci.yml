@@ -19,7 +19,6 @@ pre-commit:
     - if: '$CI_PIPELINE_SOURCE != "schedule"'
   cache:
     paths:
-      - /nix/store/*
       - ${PRE_COMMIT_HOME}
 
 .buildtemplate:

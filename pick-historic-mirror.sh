@@ -12,8 +12,7 @@ MIRRORS=(
   rsync://mirror.nju.edu.cn/tex-historic/
 )
 
-if (( $# != 1 ))
-then
+if (($# != 1)); then
   printf 'Usage: %s YEAR\n' "$0" >&2
   exit 1
 fi
@@ -21,8 +20,8 @@ fi
 YEAR="$1"
 
 if [[ ! $YEAR =~ ^[0-9]{4}$ ]]; then
-    printf 'Invalid year: %s. Expected four digits.\n' "$YEAR" >&2
-    exit 2
+  printf 'Invalid year: %s. Expected four digits.\n' "$YEAR" >&2
+  exit 2
 fi
 
 MIRROR_INDEX=$((YEAR % ${#MIRRORS[@]}))

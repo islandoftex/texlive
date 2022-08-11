@@ -29,6 +29,7 @@ repos:
     - id: git-check
     - id: shellcheck
     - id: shfmt
+      args: ['-i 2']
 - repo: https://github.com/nix-community/nixpkgs-fmt
   rev: v1.3.0
   hooks:

@@ -16,7 +16,7 @@ PUSH_TO_GITLAB="$2"
 GL_PUSH_TAG="$RELEASE_IMAGE:base"
 
 # Build and tag image
-docker build --force-rm --no-cache -f Dockerfile.base --tag "$GL_PUSH_TAG" .
+docker build -f Dockerfile.base --tag "$GL_PUSH_TAG" .
 
 # Push image
 if [[ ! -z "$PUSH_TO_GITLAB" ]]

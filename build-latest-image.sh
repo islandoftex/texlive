@@ -31,7 +31,7 @@ fi
 TAGS=("${GL_PUSH_TAGS[@]}" "${GH_PUSH_TAGS[@]}")
 
 # Build and tag image
-docker build --force-rm --no-cache -f Dockerfile "${TAGS[@]/#/--tag }" \
+docker build -f Dockerfile "${TAGS[@]/#/--tag }" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \
   --build-arg SCHEME="$SCHEME" \

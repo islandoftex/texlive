@@ -24,7 +24,7 @@ GH_PUSH_TAG="$DOCKER_HUB_IMAGE:$IMAGETAG"
 TAGS=("$GL_PUSH_TAG" "$GH_PUSH_TAG")
 
 # Build and tag image
-docker build --force-rm --no-cache -f Dockerfile.historic "${TAGS[@]/#/--tag }" \
+docker build -f Dockerfile.historic "${TAGS[@]/#/--tag }" \
   --build-arg CURRENTRELEASE="$CURRENTRELEASE" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \

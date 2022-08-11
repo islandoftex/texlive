@@ -3,8 +3,7 @@
 set -e -o xtrace
 
 # Load command-line arguments
-if [[ $# != 2 ]]
-then
+if [[ $# != 2 ]]; then
   printf 'Usage: %s RELEASE_IMAGE PUSH_TO_GITLAB\n' "$0" >&2
   exit 1
 fi
@@ -19,8 +18,7 @@ GL_PUSH_TAG="$RELEASE_IMAGE:base"
 docker build -f Dockerfile.base --tag "$GL_PUSH_TAG" .
 
 # Push image
-if [[ ! -z "$PUSH_TO_GITLAB" ]]
-then
+if [[ -n "$PUSH_TO_GITLAB" ]]; then
   docker push "$GL_PUSH_TAG"
 fi
 

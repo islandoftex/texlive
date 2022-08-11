@@ -3,8 +3,7 @@
 set -e -o xtrace
 
 # Load command-line arguments
-if [[ $# != 6 ]]
-then
+if [[ $# != 6 ]]; then
   printf 'Usage: %s DOCFILES SRCFILES CURRENTRELEASE TLMIRRORURL PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB\n' "$0" >&2
   exit 1
 fi
@@ -32,13 +31,11 @@ docker build -f Dockerfile.tree "${TAGS[@]/#/--tag }" \
   --build-arg TLMIRRORURL="$TLMIRRORURL" .
 
 # Push image
-if [[ ! -z "$PUSH_TO_GITLAB" ]]
-then
+if [[ -n "$PUSH_TO_GITLAB" ]]; then
   docker push "$GL_PUSH_TAG"
 fi
 
-if [[ ! -z "$PUSH_TO_DOCKER_HUB" ]]
-then
+if [[ -n "$PUSH_TO_DOCKER_HUB" ]]; then
   docker push "$GH_PUSH_TAG"
 fi
 

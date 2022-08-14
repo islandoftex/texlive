@@ -103,7 +103,7 @@ build:baseimage:
   extends: .buildtemplate
   stage: build
   script:
-    - TLMIRRORURL="$(./pick-historic-mirror.sh $CURRENTRELEASE)systems/texlive/$CURRENTRELEASE/tlnet-final"
+    - TLMIRRORURL="$(scripts/pick-historic-mirror.sh $CURRENTRELEASE)systems/texlive/$CURRENTRELEASE/tlnet-final"
     - ./scripts/build-tree-image.sh "$DOCFILES" "$SRCFILES" "$CURRENTRELEASE" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
 
 .historictemplate:

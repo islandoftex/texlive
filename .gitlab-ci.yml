@@ -93,7 +93,7 @@ build:baseimage:
   script:
     - apk add --no-cache curl sed
     - TLMIRRORURL="rsync://rsync.dante.ctan.org/CTAN/systems/texlive/tlnet/"
-    - ./scripts/build-latest-image.sh "$DOCFILES" "$SRCFILES" "$SCHEME" "$CURRENTRELEASE" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
+    - ./scripts/build-latest-image.sh "$RELEASE_IMAGE" "$DOCKER_HUB_IMAGE" "$DOCFILES" "$SRCFILES" "$SCHEME" "$CURRENTRELEASE" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
   artifacts:
     expire_in: 4 weeks
     paths:
@@ -104,13 +104,13 @@ build:baseimage:
   stage: build
   script:
     - TLMIRRORURL="$(scripts/pick-historic-mirror.sh $CURRENTRELEASE)systems/texlive/$CURRENTRELEASE/tlnet-final"
-    - ./scripts/build-tree-image.sh "$DOCFILES" "$SRCFILES" "$CURRENTRELEASE" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
+    - ./scripts/build-tree-image.sh "$RELEASE_IMAGE" "$DOCKER_HUB_IMAGE" "$DOCFILES" "$SRCFILES" "$CURRENTRELEASE" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
 
 .historictemplate:
   extends: .buildtemplate
   stage: build
   script:
-    - ./scripts/build-historic-image.sh "$DOCFILES" "$SRCFILES" "$CURRENTRELEASE" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
+    - ./scripts/build-historic-image.sh "$RELEASE_IMAGE" "$DOCKER_HUB_IMAGE" "$DOCFILES" "$SRCFILES" "$CURRENTRELEASE" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB"
 
 # build the latest image
 build:latest:

@@ -3,16 +3,18 @@
 set -e -o xtrace
 
 # Load command-line arguments
-if [[ $# != 5 ]]; then
-  printf 'Usage: %s DOCFILES SRCFILES CURRENTRELEASE PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB\n' "$0" >&2
+if [[ $# != 7 ]]; then
+  printf 'Usage: %s RELEASE_IMAGE DOCKER_HUB_IMAGE DOCFILES SRCFILES CURRENTRELEASE PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB\n' "$0" >&2
   exit 1
 fi
 
-DOCFILES="$1"
-SRCFILES="$2"
-CURRENTRELEASE="$3"
-PUSH_TO_GITLAB="$4"
-PUSH_TO_DOCKER_HUB="$5"
+RELEASE_IMAGE="$1"
+DOCKER_HUB_IMAGE="$2"
+DOCFILES="$3"
+SRCFILES="$4"
+CURRENTRELEASE="$5"
+PUSH_TO_GITLAB="$6"
+PUSH_TO_DOCKER_HUB="$7"
 
 # Construct image tags
 SUFFIX="$(if [ "$DOCFILES" = "yes" ]; then echo "-doc"; fi)"

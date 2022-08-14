@@ -24,7 +24,7 @@ GH_PUSH_TAG="$DOCKER_HUB_IMAGE:$IMAGETAG"
 TAGS=("$GL_PUSH_TAG" "$GH_PUSH_TAG")
 
 # Build and tag image
-docker build -f Dockerfile.tree "${TAGS[@]/#/--tag }" \
+docker build -f Dockerfile.tree ${TAGS[@]/#/--tag } \
   --build-arg CURRENTRELEASE="$CURRENTRELEASE" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \

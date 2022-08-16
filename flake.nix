@@ -14,18 +14,20 @@
         };
       in
       {
-        devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            # install pre-commit into the shell environment
-            pre-commit
-            # ... and all its dependencies for the hooks
-            hadolint
-            nixpkgs-fmt
-            shellcheck
-            shfmt
-            # nixpkgs-fmt on other hand also depends on rust
-            cargo
-          ];
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              # install pre-commit into the shell environment
+              pre-commit
+              # ... and all its dependencies for the hooks
+              hadolint
+              nixpkgs-fmt
+              shellcheck
+              shfmt
+              # nixpkgs-fmt on other hand also depends on rust
+              cargo
+            ];
+          };
         };
       }
     );

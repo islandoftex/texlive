@@ -60,7 +60,7 @@ that worked, e.g. `TL2022-2022-06-05`.
 
 ## Historic releases
 
-We are maintaining images for historic releases from 2014 on. If you need an
+We are maintaining images for historic releases from 2013 on. If you need an
 image for an older TeX Live feel free to file a feature request. We might
 consider adding older distributions if there is a user base.
 

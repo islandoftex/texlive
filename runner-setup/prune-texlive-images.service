@@ -1,0 +1,8 @@
+[Unit]
+Description=Prune Docker
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/prune-texlive-images.sh
+ 
+WorkingDirectory=/tmp

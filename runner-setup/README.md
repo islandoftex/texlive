@@ -1,6 +1,6 @@
 # TeX Live docker images GitLab runner setup
 
-The TeX Live docker image repository builds the images and afterwards uploads them to docker hub.
+The TeX Live docker image repository builds the images and afterwards uploads them to our [GitLab registry](https://gitlab.com/islandoftex/images/texlive/container_registry) and [Docker Hub](https://hub.docker.com/r/texlive/texlive).
 The build process is using [Runners](https://docs.gitlab.com/runner/).
 This document describes how to setup a runner for the project yourself.
 

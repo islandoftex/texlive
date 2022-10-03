@@ -23,7 +23,7 @@ gitlab-runner register
 You will then be asked for
 
 - the GitLab instance URL (https://gitlab.com)
-- the registration token (can be found at `<Project Repo URL>-/settings/ci_cd`)
+- the registration token (can be found at `<Project Repo URL>/-/settings/ci_cd`)
 - description
 - optional tags
 - optional maintenance note

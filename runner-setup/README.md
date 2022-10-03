@@ -29,7 +29,7 @@ You will then be asked for
 - optional maintenance note
 - excutor (we recommend and use the docker executor)
 
-For the official IoT repository the registrations tokens are not public. In case you want to support us by providing additional runners feel free to get into contact.
+For the official IoT repository the registrations tokens are not public. In case you want to support us by providing additional runners feel free to get into contact ([Matrix room](https://matrix.to/#/!titTeSvZiqNOvRIKCv:matrix.org?via=matrix.org) see project badges).
 
 The basic build process includes the push to docker hub. To allow your runner to do so you also have to change/add some settings withing your runner configuration.
 This should be found in `/etc/gitlab-runner/config.toml`. Please ensure to only edit the Runner you just registered for this project.

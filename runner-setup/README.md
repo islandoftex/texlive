@@ -6,11 +6,11 @@ This document describes how to setup a runner for the project yourself.
 
 ## Requirements
 
-The requirements to setup a runner mostly consist of available disk space (minimum 25 GB) and a network connection to download the files from CTAN.
+The requirements to setup a runner mostly consist of available disk space (minimum 25 GB, when aggressive pruning is applied, see below) and a network connection to download the files from CTAN.
 
 We use the docker executor to avoid conflicts with the base system. Therefore you need to have an up and running [docker demon](https://docs.docker.com/config/daemon/) as well as the [GitLab Runner binaries](https://docs.gitlab.com/runner/install/).
 
-To cleanup the file system e currently use prune scripts. They require bash, xargs, awk and grep. The files in this repo will use systemd but this is not a general requirement one could easily adjust those for cron.
+To cleanup the file system, we currently use prune scripts. They require bash, xargs, awk and grep. The files in this repo will use systemd but this is not a general requirement one could easily adjust those for cron.
 
 ## Register a runner
 
@@ -31,7 +31,7 @@ You will then be asked for
 
 For the official IoT repository the registrations tokens are not public. In case you want to support us by providing additional runners feel free to get into contact ([Matrix room](https://matrix.to/#/!titTeSvZiqNOvRIKCv:matrix.org?via=matrix.org) see project badges).
 
-The basic build process includes the push to docker hub. To allow your runner to do so you also have to change/add some settings withing your runner configuration.
+The basic build process involves pushing to multiple registries. To allow your runner to do so you also have to change/add some settings withing your runner configuration.
 This should be found in `/etc/gitlab-runner/config.toml`. Please ensure to only edit the Runner you just registered for this project.
 
 ```

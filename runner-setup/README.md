@@ -54,7 +54,7 @@ Since we build docker images which might need a lot of disk space it's necessary
 We currently use a systemd service which is starting a simple bash script to search for leftover images and is cleaning this up.
 The script  is called `prune-texlive-images.sh`.
 To install it as a systemd service which is run hourly you move the `prune-texlive-images.service` and the `prune-texlive-images.timer` files to your systemd directory (probably `/etc/systemd/system/`).
-The bash script is placed in `/usr/bin/prune-texlive-images.sh`.
+The bash script is placed in `/usr/local/bin/prune-texlive-images.sh`.
 
 Run `systemctl daemon-reload` to update the daemon and afterwards you should enable (`systemctl enable prune-texlive-images`) and start the service (`systemctl start prune-texlive-images`).
 

@@ -3,7 +3,7 @@
 This repository provides dockerfiles for [TeX Live](http://tug.org/texlive/)
 repositories (full installation with all packages but without documentation).
 It also provides the necessary tooling to execute common helper tools (e.g.
-Java for Arara, Perl for Biber and Xindy, Python for Pygments).
+Java for arara, Perl for Biber and Xindy, Python for Pygments).
 
 Please note that we only provide selected historical releases and one image
 corresponding to the latest release of TeX Live (tagged latest).
@@ -57,6 +57,14 @@ that worked, e.g. `TL2022-2022-06-05`.
 > In releases prior to TL2021, we used
 > `TL{RELEASE}-{YEAR}-{MONTH}-{DAY}-{HOUR}-{MINUTE}` which should be considered
 > when referring to older images by date.
+
+`latest` images are also available for different TeX Live *schemes*. The
+following schemes are built: `minimal`, `basic`, `small`, `medium`, and `full`.
+For all these, you may use them with doc tree, src tree, or both, or none like
+you would a regular `latest` image. Example: `latest-small-doc` will pull the
+`latest` image built with the basic scheme and the doc tree (without source
+tree). `latest-{,doc,src,doc-src}` is an alias for
+`latest-full-{,doc,src,doc-src}` (i.e. we default to scheme `full`).
 
 ## Historic releases
 

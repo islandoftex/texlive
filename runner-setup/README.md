@@ -34,7 +34,7 @@ For the official IoT repository the registrations tokens are not public. In case
 The basic build process involves pushing to multiple registries. To allow your runner to do so you also have to change/add some settings withing your runner configuration.
 This should be found in `/etc/gitlab-runner/config.toml`. Please ensure to only edit the Runner you just registered for this project.
 
-```
+``` toml
 [[runners]]
 name = "RUNNER_NAME"
 url = "https://gitlab.com/"

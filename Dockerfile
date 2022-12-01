@@ -25,8 +25,6 @@ RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texliv
   # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.
   apt-get install -qy --no-install-recommends equivs \
-  # texlive-local depends on freeglut
-  freeglut3 \
   # at this point also install gpg and gpg-agent to allow tlmgr's
   # key subcommand to work correctly (see #21)
   gpg gpg-agent \

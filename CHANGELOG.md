@@ -2,6 +2,12 @@
 
 ## TeX Live 2022
 
+### 2022-12
+
+* Remove `freeglut3` package (which the official debian package depends on)
+  from our containers due to being missing in debian testing repositories.
+  (see #28)
+
 ### 2022-08
 
 * `latest` images are now provided for the `minimal`, `basic`, `small`, and

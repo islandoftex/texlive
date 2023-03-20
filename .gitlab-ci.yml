@@ -118,7 +118,7 @@ build:latest:
   extends: .latesttemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2022]
+      - CURRENTRELEASE: [2023]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
         SCHEME: ["minimal", "basic", "small", "medium", "full"]
@@ -129,24 +129,24 @@ test:latest:
 
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)
-# build historic images between 2017 and 2021 (inclusive)
+# build historic images between 2018 and 2022 (inclusive)
 # this is batch i (one)
 build:tree:17to21:
   extends: .treetemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2017, 2018, 2019, 2020, 2021]
+      - CURRENTRELEASE: [2018, 2019, 2020, 2021, 2022]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
     - if: '$HISTORICTREEBATCHI == "true"'
-# build historic images between 2015 and 2016 (inclusive)
+# build historic images between 2015 and 2017 (inclusive)
 # this is batch ii (two)
 build:tree:15to16:
   extends: .treetemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2015, 2016]
+      - CURRENTRELEASE: [2015, 2016, 2017]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -168,7 +168,7 @@ build:historic:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -178,7 +178,7 @@ test:historic:
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICIMAGES == "true"'

@@ -28,7 +28,6 @@ TAGS=("$GL_PUSH_TAG" "$GH_PUSH_TAG")
 # Build and tag image
 # shellcheck disable=SC2068
 docker build -f Dockerfile.tree ${TAGS[@]/#/--tag } \
-  --build-arg CURRENTRELEASE="$CURRENTRELEASE" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \
   --build-arg TLMIRRORURL="$TLMIRRORURL" .

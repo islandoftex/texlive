@@ -8,12 +8,6 @@ ARG SRCFILES=no
 # the mirror from which we will download TeX Live
 ARG TLMIRRORURL
 
-# the current release needed to determine which way to
-# verify files
-ARG CURRENTRELEASE
-
-ARG GENERATE_CACHES=yes
-
 # install required setup dependencies
 RUN apt-get update && \
   apt-get install -qy --no-install-recommends \

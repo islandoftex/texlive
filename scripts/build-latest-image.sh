@@ -39,11 +39,11 @@ docker run -d "$LATESTTAG" \
 CURRENTRELEASE=$(head -c 4 <find_output)
 
 if ! [[ $CURRENTRELEASE =~ ^[0-9]+$ ]]; then
-  echo "TeX Live release must only contain digits 0-9, invalid output $CURRENTRELEASE." >&2
+  echo "TeX Live release must only contain digits 0-9, invalid output $(cat find_output)." >&2
   exit 1
 fi
 if [ "${#CURRENTRELEASE}" -ne 4 ]; then
-  echo "Years have to be represented by 4 digits, invalid output $CURRENTRELEASE." >&2
+  echo "Years have to be represented by 4 digits, invalid output $(cat find_output)." >&2
   exit 1
 fi
 

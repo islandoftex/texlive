@@ -59,18 +59,21 @@ if [[ "$SCHEME" = "full" ]]; then
 fi
 TAGS=("${GL_PUSH_TAGS[@]}" "${GH_PUSH_TAGS[@]}")
 
+echo "Tagging $LATESTTAG as ${TAGS[*]}"
 for TAG in "${TAGS[@]}"; do
   docker tag "$LATESTTAG" "$TAG"
 done
 
 # Push image to remotes.
 if [[ -n "$PUSH_TO_GITLAB" ]]; then
+  echo "Initiating push to GitLab"
   for TAG in "${GL_PUSH_TAGS[@]}"; do
     docker push "$TAG"
   done
 fi
 
 if [[ -n "$PUSH_TO_DOCKER_HUB" ]]; then
+  echo "Initiating push to DockerHub"
   for TAG in "${GH_PUSH_TAGS[@]}"; do
     docker push "$TAG"
   done

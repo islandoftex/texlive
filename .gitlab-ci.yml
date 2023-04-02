@@ -130,7 +130,7 @@ test:latest:
 #       rate limit which we should obey to get the CI passing)
 # build historic images between 2018 and 2022 (inclusive)
 # this is batch i (one)
-build:tree:17to21:
+build:tree:17to22:
   extends: .treetemplate
   parallel:
     matrix:
@@ -141,7 +141,7 @@ build:tree:17to21:
     - if: '$HISTORICTREEBATCHI == "true"'
 # build historic images between 2015 and 2017 (inclusive)
 # this is batch ii (two)
-build:tree:15to16:
+build:tree:15to17:
   extends: .treetemplate
   parallel:
     matrix:

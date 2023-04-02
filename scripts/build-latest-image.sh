@@ -35,7 +35,7 @@ docker build -f Dockerfile --tag "$LATESTTAG" \
 # Extract the current year from the container by checking which TL year folder
 # can be found in `/usr/local/texlive`.
 docker run "$LATESTTAG" \
-  find /usr/local/texlive/ -mindepth 1 -maxdepth 1 -type d -printf "%f\n" >find_output
+  find /usr/local/texlive/ -mindepth 1 -maxdepth 1 -type d -regex ".*/[0-9]*" -printf "%f\n" >find_output
 CURRENTRELEASE=$(head -c 4 <find_output)
 
 if ! [[ $CURRENTRELEASE =~ ^[0-9]+$ ]]; then

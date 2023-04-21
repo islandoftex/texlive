@@ -20,6 +20,8 @@ WORKDIR /tmp
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   rsync -a --stats "$TLMIRRORURL" texlive && \
   cd texlive && \
+  # debug output for potential bad rsync fetches
+  if ! [ -f install-tl ]; then ls -lisa; fi && \
   # create installation profile for full scheme installation with
   # the selected options
   echo "Building with documentation: $DOCFILES" && \

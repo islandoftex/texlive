@@ -86,8 +86,8 @@ RUN echo "Set PATH to $PATH" && \
       mtxrun --generate && \
       texlua /usr/bin/mtxrun.lua --luatex --generate && \
       context --make && \
-      context --luatex --make && \
-    fi; \
+      context --luatex --make; \
+    fi \
   else \
     echo "Not generating caches or ConTeXt files"; \
   fi

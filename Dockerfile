@@ -65,7 +65,9 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   # actually install TeX Live
   ./install-tl -profile install.profile && \
   cd .. && \
-  rm -rf texlive
+  rm -rf texlive && \
+  # Temporary fix for ConTeXt (#30)
+  (sed -i '/package.loaded\["data-ini"\]/a if os.selfpath then environment.ownbin=lfs.symlinktarget(os.selfpath..io.fileseparator..os.selfname);environment.ownpath=environment.ownbin:match("^.*"..io.fileseparator) else environment.ownpath=kpse.new("luatex"):var_value("SELFAUTOLOC");environment.ownbin=environment.ownpath..io.fileseparator..(arg[-2] or arg[-1] or arg[0] or "luatex"):match("[^"..io.fileseparator.."]*$") end' /usr/bin/mtxrun.lua || true)
 
 WORKDIR /
 RUN echo "Set PATH to $PATH" && \
@@ -98,8 +100,8 @@ RUN \
     biber --version && printf '\n' && \
     xindy --version && printf '\n' && \
     arara --version && printf '\n' && \
-    context --version; printf '\n' && \
-    context --luatex --version; printf '\n' && \
+    context --version && printf '\n' && \
+    context --luatex --version && printf '\n' && \
     if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
     if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi; \
   fi && \

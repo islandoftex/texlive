@@ -74,15 +74,20 @@ RUN echo "Set PATH to $PATH" && \
   # matter for images in the sizes of GBs; some TL schemes might not have
   # all the tools, therefore failure is allowed
   if [ "$GENERATE_CACHES" = "yes" ]; then \
-    echo "Generating caches" && \
+    echo "Generating caches and ConTeXt files" && \
     (luaotfload-tool -u || true) && \
-    (mtxrun --generate || true) && \
     # also generate fontconfig cache as per #18 which is approx. 20 MB but
     # benefits XeLaTeX user to load fonts from the TL tree by font name
     (cp "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf || true) && \
-    fc-cache -fsv; \
+    fc-cache -fsv && \
+    if [ -f "/usr/bin/context" ]; then \
+      mtxrun --generate && \
+      texlua /usr/bin/mtxrun.lua --luatex --generate && \
+      context --make && \
+      context --luatex --make && \
+    fi; \
   else \
-    echo "Not generating caches"; \
+    echo "Not generating caches or ConTeXt files"; \
   fi
 
 RUN \
@@ -93,6 +98,8 @@ RUN \
     biber --version && printf '\n' && \
     xindy --version && printf '\n' && \
     arara --version && printf '\n' && \
+    context --version; printf '\n' && \
+    context --luatex --version; printf '\n' && \
     if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
     if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi; \
   fi && \

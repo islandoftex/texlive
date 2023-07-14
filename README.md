@@ -66,6 +66,11 @@ you would a regular `latest` image. Example: `latest-small-doc` will pull the
 tree). `latest-{,doc,src,doc-src}` is an alias for
 `latest-full-{,doc,src,doc-src}` (i.e. we default to scheme `full`).
 
+*Note for users of schemes other than `full`*: if you `tlmgr install` another
+binary they are not added to the `PATH` automatically because they are not
+respected by `tlmgr path add` while building the image. Use `tlmgr install
+binary && tlmgr path add` to install new executables.
+
 ## Historic releases
 
 We are maintaining images for historic releases from 2013 on. If you need an

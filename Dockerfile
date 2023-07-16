@@ -67,7 +67,7 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   cd .. && \
   rm -rf texlive
 
-WORKDIR /
+WORKDIR /workdir
 RUN echo "Set PATH to $PATH" && \
   $(find /usr/local/texlive -name tlmgr) path add && \
   # Temporary fix for ConTeXt (#30)

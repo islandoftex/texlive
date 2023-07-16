@@ -1,5 +1,13 @@
 # Changelog for the TeX Live Docker images
 
+## TeX Live 2023
+
+## 2023-08
+
+* The default working directory is now `/workdir` instead of `/` to ease the
+  usage in GitHub actions workflows.
+  (see !35)
+
 ## TeX Live 2022
 
 ### 2022-12

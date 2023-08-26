@@ -8,11 +8,12 @@ if [[ $# != 8 ]]; then
   exit 1
 fi
 
-buildx_driver="$(docker buildx inspect | sed -n 's/^Driver:\s*\(.*\)$/\1/p')"
-if [[ "$buildx_driver" != "docker-container" ]]; then
+BUILDX_DRIVER="$(docker buildx inspect | sed -n 's/^Driver:\s*\(.*\)$/\1/p')"
+if [[ "$BUILDX_DRIVER" != "docker-container" ]]; then
   echo "This runner does not seem set up for buildx building. Trying to rectify by creating buildx environment." >&2
   docker buildx create --use
 fi
+BUILDX_PLATFORMS="linux/arm/v7,linux/arm64/v8,linux/amd64"
 
 RELEASE_IMAGE="$1"
 DOCKER_HUB_IMAGE="$2"
@@ -30,9 +31,25 @@ SUFFIX="$(if [[ "$DOCFILES" = "yes" ]]; then echo "-doc"; fi)"
 SUFFIX="$SUFFIX$(if [[ "$SRCFILES" = "yes" ]]; then echo "-src"; fi)"
 LATESTTAG="latest-$SCHEME$SUFFIX"
 
-# Build and temporarily tag image
+# Build and temporarily tag image for all platforms, caching the build for all
+# of them locally. Ideally, would directly load the images but that does not
+# work because of still unresolved https://github.com/docker/buildx/issues/59
 # shellcheck disable=SC2068
-docker build -f Dockerfile --tag "$LATESTTAG" \
+docker buildx build \
+  --platform "$BUILDX_PLATFORMS" \
+  --cache-from type=local,src=./cache-dir \
+  --cache-to type=local,dest=./cache-dir,mode=max \
+  -f Dockerfile --tag "$LATESTTAG" \
+  --build-arg DOCFILES="$DOCFILES" \
+  --build-arg SRCFILES="$SRCFILES" \
+  --build-arg SCHEME="$SCHEME" \
+  --build-arg TLMIRRORURL="$TLMIRRORURL" .
+# Load the image for the host platform into the local docker cache to be able
+# to run it later on (--load). Does not build anything, just reuses the cache
+# created earlier.
+docker buildx build --load \
+  --cache-from type=local,src=./cache-dir \
+  -f Dockerfile --tag "$LATESTTAG" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \
   --build-arg SCHEME="$SCHEME" \
@@ -63,26 +80,30 @@ if [[ "$SCHEME" = "full" ]]; then
   GL_PUSH_TAGS+=("$RELEASE_IMAGE:latest$SUFFIX")
   GH_PUSH_TAGS+=("$DOCKER_HUB_IMAGE:latest$SUFFIX")
 fi
+if [[ -z "$PUSH_TO_GITLAB" ]]; then
+  GL_PUSH_TAGS=()
+fi
+if [[ -z "$PUSH_TO_DOCKER_HUB" ]]; then
+  GH_PUSH_TAGS=()
+fi
 TAGS=("${GL_PUSH_TAGS[@]}" "${GH_PUSH_TAGS[@]}")
 
 echo "Tagging $LATESTTAG as ${TAGS[*]}"
-for TAG in "${TAGS[@]}"; do
-  docker tag "$LATESTTAG" "$TAG"
-done
-
-# Push image to remotes.
-if [[ -n "$PUSH_TO_GITLAB" ]]; then
-  echo "Initiating push to GitLab"
-  for TAG in "${GL_PUSH_TAGS[@]}"; do
-    docker push "$TAG"
-  done
-fi
-
-if [[ -n "$PUSH_TO_DOCKER_HUB" ]]; then
-  echo "Initiating push to DockerHub"
-  for TAG in "${GH_PUSH_TAGS[@]}"; do
-    docker push "$TAG"
-  done
+# Push the images for all platforms to the registries (--push). Does not build
+# anything, just reuses the cache created earlier.
+if [ "${#TAGS[@]}" -gt 0 ]; then
+  TAGSTR="${TAGS[*]}"
+  TAGSTR="--tag ${TAGS// / --tag }"
+  # shellcheck disable=SC2086 # quotes are intentionally missing because the
+  # tag flags are supposed to be split by whitespace
+  docker buildx build --push \
+    --platform "BUILDX_PLATFORMS" \
+    --cache-from type=local,src=./cache-dir \
+    -f Dockerfile $TAGSTR \
+    --build-arg DOCFILES="$DOCFILES" \
+    --build-arg SRCFILES="$SRCFILES" \
+    --build-arg SCHEME="$SCHEME" \
+    --build-arg TLMIRRORURL="$TLMIRRORURL" .
 fi
 
 # Update CI badge

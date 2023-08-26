@@ -2,6 +2,13 @@
 
 ## TeX Live 2023
 
+## 2023-09
+
+* The latest images are now built for the following platforms: linux/arm/v7,
+  linux/arm64/v8, and linux/amd64 (the latter being the only platform built for
+  up to now).
+  (see #15)
+
 ## 2023-08
 
 * The default working directory is now `/workdir` instead of `/` to ease the

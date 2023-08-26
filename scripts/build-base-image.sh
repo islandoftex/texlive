@@ -20,15 +20,15 @@ PUSH_TO_GITLAB="$2"
 # Construct image tag
 GL_PUSH_TAG="$RELEASE_IMAGE:base"
 
-# Build and tag image
+if [[ -n "$PUSH_TO_GITLAB" ]]; then
+  PUSH_FLAG="--push"
+fi
+
+# Build, tag, and push image
 docker buildx build \
   --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
-  -f Dockerfile.base --tag "$GL_PUSH_TAG" .
-
-# Push image
-if [[ -n "$PUSH_TO_GITLAB" ]]; then
-  docker push "$GL_PUSH_TAG"
-fi
+  -f Dockerfile.base --tag "$GL_PUSH_TAG" \
+  "$PUSH_FLAG" .
 
 # Untag build images, so that the runner can prune them
 docker rmi --no-prune "$GL_PUSH_TAG" || true

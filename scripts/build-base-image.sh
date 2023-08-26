@@ -21,7 +21,7 @@ PUSH_TO_GITLAB="$2"
 GL_PUSH_TAG="$RELEASE_IMAGE:base"
 
 if [[ -n "$PUSH_TO_GITLAB" ]]; then
-  PUSH_FLAG="--push"
+  PUSH_FLAG="--push --provenance false"
 fi
 
 # Build, tag, and push image

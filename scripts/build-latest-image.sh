@@ -32,9 +32,7 @@ LATESTTAG="latest-$SCHEME$SUFFIX"
 
 # Build and temporarily tag image
 # shellcheck disable=SC2068
-docker buildx build \
-  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
-  -f Dockerfile --tag "$LATESTTAG" \
+docker build -f Dockerfile --tag "$LATESTTAG" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \
   --build-arg SCHEME="$SCHEME" \

@@ -96,7 +96,7 @@ if [ "${#TAGS[@]}" -gt 0 ]; then
   TAGSTR="--tag ${TAGS// / --tag }"
   # shellcheck disable=SC2086 # quotes are intentionally missing because the
   # tag flags are supposed to be split by whitespace
-  docker buildx build --push \
+  docker buildx build --push --provenance false \
     --platform "$BUILDX_PLATFORMS" \
     --cache-from type=local,src=./cache-dir \
     -f Dockerfile $TAGSTR \

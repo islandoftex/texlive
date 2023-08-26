@@ -58,5 +58,10 @@ The bash script is placed in `/usr/local/bin/prune-texlive-images.sh`.
 
 Run `systemctl daemon-reload` to update the daemon and afterwards you should enable (`systemctl enable prune-texlive-images`) and start the service (`systemctl start prune-texlive-images`).
 
-You can of course also edit the script path. Please take care that you also have to adjust the path within the `prune-texlie-images.service` file.
+You can of course also edit the script path. Please take care that you also have to adjust the path within the `prune-texlive-images.service` file.
 In case you have a lot of available disk space it's possible to reduce the frequency. This can be adjusted within the timer file.
+
+## Providing multi-architecture capabilities
+
+We require our runners for the latest images to provide multi-architecture (“docker buildx”) support.
+Use `docker buildx create --name multiarch --driver docker-container --use` to create an appropriate builder on your runner.

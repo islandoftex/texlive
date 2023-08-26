@@ -8,6 +8,12 @@ if [[ $# != 2 ]]; then
   exit 1
 fi
 
+buildx_driver="$(docker buildx inspect | sed -n 's/^Driver:\s*\(.*\)$/\1/p')"
+if [[ "$buildx_driver" != "docker-container" ]]; then
+  echo "This runner does not seem set up for buildx building. Trying to rectify by creating buildx environment." >&2
+  docker buildx create --use
+fi
+
 RELEASE_IMAGE="$1"
 PUSH_TO_GITLAB="$2"
 
@@ -15,7 +21,9 @@ PUSH_TO_GITLAB="$2"
 GL_PUSH_TAG="$RELEASE_IMAGE:base"
 
 # Build and tag image
-docker build -f Dockerfile.base --tag "$GL_PUSH_TAG" .
+docker buildx build \
+  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+  -f Dockerfile.base --tag "$GL_PUSH_TAG" .
 
 # Push image
 if [[ -n "$PUSH_TO_GITLAB" ]]; then

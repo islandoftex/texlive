@@ -8,6 +8,12 @@ if [[ $# != 8 ]]; then
   exit 1
 fi
 
+buildx_driver="$(docker buildx inspect | sed -n 's/^Driver:\s*\(.*\)$/\1/p')"
+if [[ "$buildx_driver" != "docker-container" ]]; then
+  echo "This runner does not seem set up for buildx building. Trying to rectify by creating buildx environment." >&2
+  docker buildx create --use
+fi
+
 RELEASE_IMAGE="$1"
 DOCKER_HUB_IMAGE="$2"
 DOCFILES="$3"
@@ -26,7 +32,9 @@ LATESTTAG="latest-$SCHEME$SUFFIX"
 
 # Build and temporarily tag image
 # shellcheck disable=SC2068
-docker build -f Dockerfile --tag "$LATESTTAG" \
+docker buildx build \
+  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+  -f Dockerfile --tag "$LATESTTAG" \
   --build-arg DOCFILES="$DOCFILES" \
   --build-arg SRCFILES="$SRCFILES" \
   --build-arg SCHEME="$SCHEME" \

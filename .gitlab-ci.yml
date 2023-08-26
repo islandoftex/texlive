@@ -46,6 +46,8 @@ build:baseimage:
     - ./scripts/build-base-image.sh "$RELEASE_IMAGE" "$PUSH_TO_GITLAB"
   rules:
     - if: '$SKIPBASEIMAGE != "true"'
+  tags:
+    - multiarch
 
 # from https://aquasecurity.github.io/trivy/v0.21.0/advanced/integrations/gitlab-ci/
 .container_scanning:
@@ -99,6 +101,8 @@ build:baseimage:
     expire_in: 4 weeks
     paths:
       - latest.svg
+  tags:
+    - multiarch
 
 .treetemplate:
   extends: .buildtemplate

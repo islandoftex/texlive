@@ -93,7 +93,7 @@ echo "Tagging $LATESTTAG as ${TAGS[*]}"
 # anything, just reuses the cache created earlier.
 if [ "${#TAGS[@]}" -gt 0 ]; then
   TAGSTR="${TAGS[*]}"
-  TAGSTR="--tag ${TAGS// / --tag }"
+  TAGSTR="--tag ${TAGSTR// / --tag }"
   # shellcheck disable=SC2086 # quotes are intentionally missing because the
   # tag flags are supposed to be split by whitespace
   docker buildx build --push --provenance false \

@@ -25,10 +25,12 @@ if [[ -n "$PUSH_TO_GITLAB" ]]; then
 fi
 
 # Build, tag, and push image
+# shellcheck disable=SC2086 # quotes are intentionally missing because the
+# flags are supposed to be split by whitespace
 docker buildx build \
   --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
   -f Dockerfile.base --tag "$GL_PUSH_TAG" \
-  "$PUSH_FLAG" .
+  $PUSH_FLAG .
 
 # Untag build images, so that the runner can prune them
 docker rmi --no-prune "$GL_PUSH_TAG" || true

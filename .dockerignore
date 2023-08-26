@@ -2,4 +2,7 @@
 .gitlab-ci.yml
 *.md
 test.*
-pick-historic-mirror.sh
+flake.*
+LICENSE
+runner-setup
+scripts

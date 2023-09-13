@@ -2,7 +2,7 @@
 # creation there were binaries (e.g. biber) that were not distributed for the
 # Linux/MUSL platform (at least not via default TeX Live). Now downstream
 # images rely on this, so do not change the base OS without good reason.
-FROM debian:testing
+FROM debian:testing-slim
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \

@@ -2,6 +2,11 @@
 
 ## TeX Live 2023
 
+## 2023-09
+
+* The base image now defaults to `debian:testing-slim` instead of
+  `debian:testing` saving about 20 MB (50 %) of the OS image size.
+
 ## 2023-08
 
 * The default working directory is now `/workdir` instead of `/` to ease the

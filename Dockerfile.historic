@@ -18,7 +18,11 @@ ARG DOCFILES
 ARG SRCFILES
 
 WORKDIR /tmp
-RUN apt-get update && \
+
+RUN echo "deb http://ftp.de.debian.org/debian bookworm main" >> /etc/apt/sources.list && \
+  apt-get update && \
+  # add Debian main mirror to be able to install lubncurses 5 requiered by xindy
+  apt-get install -y libncurses5 && \
   # Mark all texlive packages as installed. This enables installing
   # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.

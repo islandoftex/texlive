@@ -13,10 +13,7 @@ if [[ "$BUILDX_DRIVER" != "docker-container" ]]; then
   echo "This runner does not seem set up for buildx building. Trying to rectify by creating buildx environment." >&2
   docker buildx create --use
 fi
-# build for relevant platforms; currently only x86_64 because on the other to
-# primary targets (linux/arm/v7,linux/arm64/v8) a few binaries (like biber)
-# are missing at the moment
-BUILDX_PLATFORMS="linux/amd64"
+BUILDX_PLATFORMS="linux/arm64/v8,linux/amd64"
 
 RELEASE_IMAGE="$1"
 DOCKER_HUB_IMAGE="$2"

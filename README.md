@@ -71,6 +71,11 @@ binary they are not added to the `PATH` automatically because they are not
 respected by `tlmgr path add` while building the image. Use `tlmgr install
 binary && tlmgr path add` to install new executables.
 
+We are currently providing ARMv8 builds as experimental releases to test
+multi-architecture Docker builds. If any binary does not work on that platform,
+please check according to the instructions [here](https://matrix.to/#/!lMtRnfTLBEMGxhtokD:matrix.org/$wwqEojW9j-78eRYZIMzeGQR2nH6-UNzb-OijGIQVXUo?via=matrix.org&via=digitale-gesellschaft.ch&via=raccoon.college)
+whether it is available on that architecture.
+
 ## Historic releases
 
 We are maintaining images for historic releases from 2013 on. If you need an

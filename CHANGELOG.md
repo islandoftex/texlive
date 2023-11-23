@@ -2,6 +2,13 @@
 
 ## TeX Live 2023
 
+## 2023-11
+
+* The latest images are now built for the following platforms: linux/arm/v8,
+  and linux/amd64 (the latter being the only platform built for
+  up to now).
+  (see #15)
+
 ## 2023-09
 
 * The base image now defaults to `debian:testing-slim` instead of

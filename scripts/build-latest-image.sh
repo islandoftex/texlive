@@ -109,5 +109,10 @@ fi
 # Update CI badge
 curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--${IMAGEDATE//-/--}-blue" -o latest.svg
 
+# Stop and remove builders to avoid long-running containers blocking the
+# cleanup.
+docker buildx stop
+docker buildx rm --all-inactive --force
+
 # Untag build images, so that the runner can prune them
 docker rmi --no-prune "$LATESTTAG" "${TAGS[@]}" || true

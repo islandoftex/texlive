@@ -32,5 +32,10 @@ docker buildx build \
   -f Dockerfile.base --tag "$GL_PUSH_TAG" \
   $PUSH_FLAG .
 
+# Stop and remove builders to avoid long-running containers blocking the
+# cleanup.
+docker buildx stop
+docker buildx rm --all-inactive --force
+
 # Untag build images, so that the runner can prune them
 docker rmi --no-prune "$GL_PUSH_TAG" || true

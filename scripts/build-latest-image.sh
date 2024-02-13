@@ -3,7 +3,7 @@
 set -e -o xtrace
 
 # Load command-line arguments
-if [[ $# != 8 ]]; then
+if [[ $# != 8 ]] && [[ $# != 9 ]]; then
   printf 'Usage: %s RELEASE_IMAGE DOCKER_HUB_IMAGE DOCFILES SRCFILES SCHEME TLMIRRORURL PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB [PRETEST]\n' "$0" >&2
   exit 1
 fi

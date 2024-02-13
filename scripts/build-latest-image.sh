@@ -30,7 +30,8 @@ PRETEST="$9"
 # construct the final tags yet.
 SUFFIX="$(if [[ "$DOCFILES" = "yes" ]]; then echo "-doc"; fi)"
 SUFFIX="$SUFFIX$(if [[ "$SRCFILES" = "yes" ]]; then echo "-src"; fi)"
-LATESTTAG="$(if [[ -z "$PRETEST" ]]; then echo "latest"; else echo "pretest"; fi)-$SCHEME$SUFFIX"
+LATESTPREFIX="$(if [[ -z "$PRETEST" ]]; then echo "latest"; else echo "pretest"; fi)"
+LATESTTAG="$LATESTPREFIX-$SCHEME$SUFFIX"
 
 # Build and temporarily tag image for all platforms, caching the build for all
 # of them locally. Ideally, would directly load the images but that does not
@@ -78,8 +79,8 @@ IMAGETAG="TL$CURRENTRELEASE-$IMAGEDATE-$SCHEME$SUFFIX"
 GL_PUSH_TAGS=("$RELEASE_IMAGE:$IMAGETAG" "$RELEASE_IMAGE:$LATESTTAG")
 GH_PUSH_TAGS=("$DOCKER_HUB_IMAGE:$LATESTTAG")
 if [[ "$SCHEME" = "full" ]]; then
-  GL_PUSH_TAGS+=("$RELEASE_IMAGE:latest$SUFFIX")
-  GH_PUSH_TAGS+=("$DOCKER_HUB_IMAGE:latest$SUFFIX")
+  GL_PUSH_TAGS+=("$RELEASE_IMAGE:$LATESTPREFIX$SUFFIX")
+  GH_PUSH_TAGS+=("$DOCKER_HUB_IMAGE:$LATESTPREFIX$SUFFIX")
 fi
 if [[ -z "$PUSH_TO_GITLAB" ]]; then
   GL_PUSH_TAGS=()
@@ -108,7 +109,7 @@ if [ "${#TAGS[@]}" -gt 0 ]; then
 fi
 
 # Update CI badge
-curl "https://img.shields.io/badge/latest-TL$CURRENTRELEASE--${IMAGEDATE//-/--}-blue" -o latest.svg
+curl "https://img.shields.io/badge/$LATESTPREFIX-TL$CURRENTRELEASE--${IMAGEDATE//-/--}-blue" -o latest.svg
 
 # Stop and remove builders to avoid long-running containers blocking the
 # cleanup.

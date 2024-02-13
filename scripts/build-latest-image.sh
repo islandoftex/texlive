@@ -4,7 +4,7 @@ set -e -o xtrace
 
 # Load command-line arguments
 if [[ $# != 8 ]]; then
-  printf 'Usage: %s RELEASE_IMAGE DOCKER_HUB_IMAGE DOCFILES SRCFILES SCHEME TLMIRRORURL PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB\n' "$0" >&2
+  printf 'Usage: %s RELEASE_IMAGE DOCKER_HUB_IMAGE DOCFILES SRCFILES SCHEME TLMIRRORURL PUSH_TO_GITLAB PUSH_TO_DOCKER_HUB [PRETEST]\n' "$0" >&2
   exit 1
 fi
 
@@ -23,13 +23,14 @@ SCHEME="$5"
 TLMIRRORURL="$6"
 PUSH_TO_GITLAB="$7"
 PUSH_TO_DOCKER_HUB="$8"
+PRETEST="$9"
 
 # Construct temporary image tag which will be used to identify the image
 # locally. As we extract the TL release's year from the image, we cannot
 # construct the final tags yet.
 SUFFIX="$(if [[ "$DOCFILES" = "yes" ]]; then echo "-doc"; fi)"
 SUFFIX="$SUFFIX$(if [[ "$SRCFILES" = "yes" ]]; then echo "-src"; fi)"
-LATESTTAG="latest-$SCHEME$SUFFIX"
+LATESTTAG="$(if [[ -z "$PRETEST" ]]; then echo "latest"; else echo "pretest"; fi)-$SCHEME$SUFFIX"
 
 # Build and temporarily tag image for all platforms, caching the build for all
 # of them locally. Ideally, would directly load the images but that does not

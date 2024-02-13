@@ -104,6 +104,25 @@ build:baseimage:
   tags:
     - multiarch
 
+.pretestruletemplate:
+  rules:
+    - if: '$PRETEST == "true"'
+
+.pretesttemplate:
+  extends: [.buildtemplate, .pretestruletemplate]
+  stage: build
+  variables:
+    TLMIRRORURL: ftp.cstug.cz::pub/tex/local/tlpretest/
+  script:
+    - apk add --no-cache curl sed
+    - ./scripts/build-latest-image.sh "$RELEASE_IMAGE" "$DOCKER_HUB_IMAGE" "$DOCFILES" "$SRCFILES" "$SCHEME" "$TLMIRRORURL" "$PUSH_TO_GITLAB" "$PUSH_TO_DOCKER_HUB" "true"
+  artifacts:
+    expire_in: 4 weeks
+    paths:
+      - latest.svg
+  tags:
+    - multiarch
+
 .treetemplate:
   extends: .buildtemplate
   stage: build
@@ -129,6 +148,18 @@ test:latest:
   image: $RELEASE_IMAGE:latest
   needs: ["build:latest"]
   extends: [.testtemplate, .latestruletemplate]
+
+build:pretest:
+  extends: .pretesttemplate
+  parallel:
+    matrix:
+      - DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+        SCHEME: ["minimal", "basic", "small", "medium", "full"]
+test:pretest:
+  image: $RELEASE_IMAGE:pretest
+  needs: ["build:pretest"]
+  extends: [.testtemplate, .pretestruletemplate]
 
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)

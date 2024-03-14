@@ -199,7 +199,7 @@ build:historic:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -209,7 +209,7 @@ test:historic:
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICIMAGES == "true"'

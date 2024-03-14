@@ -164,11 +164,11 @@ test:pretest:
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)
 # build historic images batch i (one)
-build:tree:21to22:
+build:tree:21to23:
   extends: .treetemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2021, 2022]
+      - CURRENTRELEASE: [2021, 2022, 2023]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:

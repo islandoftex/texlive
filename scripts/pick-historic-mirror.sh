@@ -3,9 +3,10 @@
 set -e
 
 # The lists of historic TeX mirrors below have last been updated on
-# 2022-05-10 from <https://tug.org/historic/>.
+# 2024-03-14 from <https://tug.org/historic/>.
 MIRRORS=(
   rsync://tug.org/historic/
+  rsync://ftp.math.utah.edu/historic/
   rsync://texlive.info/historic/
   rsync://pi.kwarc.info/historic/
   rsync://mirrors.tuna.tsinghua.edu.cn/tex-historic-archive/

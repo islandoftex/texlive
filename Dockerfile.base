@@ -35,4 +35,4 @@ RUN apt-get update && \
   rm -rf /var/cache/apt/ && \
   # bad fix for python handling and libglut (asy, #48)
   ln -s /usr/bin/python3 /usr/bin/python && \
-  ln -s /usr/lib/x86_64-linux-gnu/libglut.so.3.12 /usr/lib/x86_64-linux-gnu/libglut.so.3
+  if ! [ -f /usr/lib/x86_64-linux-gnu/libglut.so.3 ]; then ln -s /usr/lib/*-linux-gnu*/libglut.so.3.12 /usr/lib/*-linux-gnu*/libglut.so.3; fi

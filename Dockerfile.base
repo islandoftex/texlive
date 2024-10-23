@@ -29,6 +29,8 @@ RUN apt-get update && \
   python3 python3-pygments \
   # for gnuplot backend of pgfplots (see !13)
   gnuplot-nox && \
+  # for asymptote (see #48)
+  libglut3.12 && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/apt/ && \
   # bad fix for python handling

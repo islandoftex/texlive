@@ -102,6 +102,7 @@ RUN \
     arara --version && printf '\n' && \
     context --version && printf '\n' && \
     context --luatex --version && printf '\n' && \
+    asy --version && printf '\n' && \
     if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
     if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi; \
   fi && \

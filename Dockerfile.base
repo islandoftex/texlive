@@ -11,7 +11,8 @@ ENV LANG=C.UTF-8 \
     TEXLIVE_INSTALL_NO_CONTEXT_CACHE=1 \
     # As we will not install regular documentation why would we want to
     # install perl docs…
-    NOPERLDOC=1
+    NOPERLDOC=1 \
+    DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
   # basic utilities for TeX Live installation
@@ -26,12 +27,15 @@ RUN apt-get update && \
   # for metafont (see #24)
   libsm6 \
   # for syntax highlighting
-  python3 python3-pygments \
+  python3 python3-pygments python-is-python3 \
   # for gnuplot backend of pgfplots (see !13)
   gnuplot-nox \
   # for asymptote (see #48)
   libglut3.12 && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/apt/ && \
-  # bad fix for python handling
-  ln -s /usr/bin/python3 /usr/bin/python
+  export LIBDIR && \
+  LIBDIR="$(find /usr/lib -type d -name '*-linux-*')" && \
+  export BASELIBDIR && \
+  BASELIBDIR="$(basename "${LIBDIR}")" && \
+  ln -sf "/usr/lib/${BASELIBDIR}/libglut.so.3.12" "/usr/lib/${BASELIBDIR}/libglut.so.3"

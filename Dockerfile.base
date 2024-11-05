@@ -12,6 +12,7 @@ ENV LANG=C.UTF-8 \
     # As we will not install regular documentation why would we want to
     # install perl docs…
     NOPERLDOC=1 \
+    # Make sure apt-get never asks a question (https://manpages.debian.org/testing/debconf-doc/debconf.7.fr.html#noninteractive)
     DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \

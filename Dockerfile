@@ -12,6 +12,9 @@ ARG TLMIRRORURL
 # whether to create font and ConTeXt caches
 ARG GENERATE_CACHES=yes
 
+# Make sure apt-get never asks a question (https://manpages.debian.org/testing/debconf-doc/debconf.7.fr.html#noninteractive)
+ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /tmp
 
 # download and install equivs file for dummy package

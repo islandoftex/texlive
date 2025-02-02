@@ -93,6 +93,30 @@ opposite: Every month, the historic images will be rebuilt and updated if there
 are updates for the underlying operating system image available. That way we
 make sure not to ship all too outdated software.
 
+## The base image (applications, rootless, ...)
+
+Our images are intended to be consumed as-is, i.e., as Docker images. They are
+not tailored for any given application or tooling. As one major feature of this
+image are the preinstalled prerequisites for TeX Live's software to work, the
+default user is root so you can easily use `apt` to install more packages. The
+base image for all our images is built on Debian testing.
+
+As of 2025-02, we provide another user `texlive` by default which has its own
+home directory at `/home/texlive`. It has access to all tools but is not allowed
+to install any software. We may tailor the `texlive` user's shell to provide
+things like automatic indexing of its texmf folder etc. so we advise downstream
+non-root consumers to use this user. Usage example:
+
+```Dockerfile
+FROM registry.gitlab.com/islandoftex/images/texlive:latest
+
+USER texlive
+WORKDIR /home/texlive
+```
+
+Note that when going rootless, you may have to adjust bind mounts etc. with
+respect to file permissions.
+
 ## Licensing
 
 The software in terms of the MIT license are the Dockerfiles and test files

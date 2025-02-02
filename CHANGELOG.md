@@ -1,5 +1,12 @@
 # Changelog for the TeX Live Docker images
 
+## TeX Live 2024
+
+## 2025-02
+
+* There is now a new `texlive` non-root user.
+  (see #52)
+
 ## TeX Live 2023
 
 ## 2023-11

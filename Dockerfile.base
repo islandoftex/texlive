@@ -40,3 +40,8 @@ RUN apt-get update && \
   export BASELIBDIR && \
   BASELIBDIR="$(basename "${LIBDIR}")" && \
   ln -sf "/usr/lib/${BASELIBDIR}/libglut.so.3.12" "/usr/lib/${BASELIBDIR}/libglut.so.3"
+
+# Add a dedicated non-root user `texlive` that downstream can simply switch
+# into (see #52).
+RUN useradd -m -s /bin/bash texlive && \
+  chown -R texlive:texlive /home/texlive

@@ -28,6 +28,8 @@ pre-commit:
   before_script:
     - if [ ! -z "$PUSH_TO_GITLAB" ]; then docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com; fi
     - if [ ! -z "$PUSH_TO_DOCKER_HUB" ]; then docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD; fi
+    - if [ ! "$PRETEST" == "true" ] && [ ! -z "$LOCALTLMIRRORPATH" ]; then export TLMIRRORURL="$LOCALTLMIRRORPATH"; fi
+    - if [ "$PRETEST" == "true" ] && [ ! -z "$LOCALPRETESTMIRRORPATH" ]; then export TLMIRRORURL="$LOCALPRETESTMIRRORPATH"; fi
     - docker info
     - apk add --no-cache bash
   # allow 2 retry for all builds (GitLab's maximum is 2)

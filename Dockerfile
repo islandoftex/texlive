@@ -67,7 +67,7 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   # actually install TeX Live
   ./install-tl -profile install.profile && \
   # set tlmgr repository for pretest as updates will not be supported otherwhise
-  if [[ "$TLMIRRORURL" =~ "pretest" ]]; then tlmgr option repository "$TLMIRRORURL"; fi && \
+  if [ "${TLMIRRORURL#*pretest}" != "$TLMIRRORURL" ]; then tlmgr option repository "$TLMIRRORURL"; fi && \
   cd .. && \
   rm -rf texlive
 

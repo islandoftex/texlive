@@ -18,11 +18,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /tmp
 
 # download and install equivs file for dummy package
-RUN curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
-  sed -i "s/2022/9999/" texlive-local && \
-  # freeglut3 does not ship with debian testing, so we remove it because there
-  # is no GUI need in the container anyway (see #28)
-  sed -i "/Depends: freeglut3/d" texlive-local && \
+RUN curl https://tug.org/texlive/files/debian-equivs-2023-ex.txt --output texlive-local && \
+  sed -i "s/2023/9999/" texlive-local && \
   apt-get update && \
   # Mark all texlive packages as installed. This enables installing
   # latex-related packges in child images.

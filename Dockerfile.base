@@ -45,3 +45,7 @@ RUN apt-get update && \
 # into (see #52).
 RUN useradd -m -s /bin/bash texlive && \
   chown -R texlive:texlive /home/texlive
+
+LABEL org.opencontainers.image.authors="Island of TeX" \
+  org.opencontainers.image.url=https://gitlab.com/islandoftex/images/texlive \
+  org.opencontainers.image.source=https://gitlab.com/islandoftex/images/texlive/-/blob/master/Dockerfile.base

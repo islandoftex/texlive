@@ -110,3 +110,7 @@ RUN \
   fi && \
   python --version && printf '\n' && \
   pygmentize -V && printf '\n'
+
+LABEL org.opencontainers.image.authors="Island of TeX" \
+  org.opencontainers.image.url=https://gitlab.com/islandoftex/images/texlive \
+  org.opencontainers.image.source=https://gitlab.com/islandoftex/images/texlive/-/blob/master/Dockerfile

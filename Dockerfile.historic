@@ -76,3 +76,7 @@ RUN \
   pygmentize -V && printf '\n' && \
   if [ "$DOCFILES" = "yes" ]; then texdoc -l geometry; fi && \
   if [ "$SRCFILES" = "yes" ]; then kpsewhich amsmath.dtx; fi
+
+LABEL org.opencontainers.image.authors="Island of TeX" \
+  org.opencontainers.image.url=https://gitlab.com/islandoftex/images/texlive \
+  org.opencontainers.image.source=https://gitlab.com/islandoftex/images/texlive/-/blob/master/Dockerfile.historic

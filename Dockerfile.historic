@@ -30,16 +30,11 @@ RUN echo "deb http://ftp.de.debian.org/debian bookworm main" >> /etc/apt/sources
   # Inspired by https://tex.stackexchange.com/a/95373/9075.
   apt-get install -qy --no-install-recommends equivs && \
   # download equivs file for dummy package
-  curl https://tug.org/texlive/files/debian-equivs-2022-ex.txt --output texlive-local && \
-  sed -i "s/2022/9999/" texlive-local && \
-  # freeglut3 does not ship with debian testing, so we remove it because there
-  # is no GUI need in the container anyway (see #28)
-  sed -i "/Depends: freeglut3/d" texlive-local && \
-  # we need to change into tl-equivs to get it working
+  curl https://tug.org/texlive/files/debian-equivs-2023-ex.txt --output texlive-local && \
+  sed -i "s/2023/9999/" texlive-local && \
   equivs-build texlive-local && \
   dpkg -i texlive-local_9999.99999999-1_all.deb && \
   apt-get install -qyf --no-install-recommends && \
-  # reverse the cd command from above and cleanup
   rm -rf ./* && \
   # save some space
   apt-get remove -y --purge equivs && \
@@ -48,7 +43,7 @@ RUN echo "deb http://ftp.de.debian.org/debian bookworm main" >> /etc/apt/sources
   apt-get clean && \
   rm -rf /var/cache/apt/
 
-COPY --from=tree /usr/local/texlive /usr/local/texlive
+COPY --link --from=tree /usr/local/texlive /usr/local/texlive
 
 # add all relevant binaries to the PATH and set TEXMF for ConTeXt
 ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \

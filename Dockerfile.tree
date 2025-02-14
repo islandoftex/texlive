@@ -13,15 +13,16 @@ RUN apt-get update && \
   apt-get install -qy --no-install-recommends \
   gpg gpg-agent perl rsync sed tar
 
-# use a working directory to collect downloaded artifacts
-WORKDIR /tmp
-
 # download and verify TL installer before extracting archive
+WORKDIR /
 RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
-  rsync -a --stats "$TLMIRRORURL" texlive && \
-  cd texlive && \
-  # debug output for potential bad rsync fetches
-  if ! [ -f install-tl ]; then ls -lisa; fi && \
+  rsync -a --stats "$TLMIRRORURL" texlive
+
+WORKDIR /texlive
+RUN --network=none if ! [ -f install-tl ]; then \
+    # debug output for potential bad rsync fetches
+    ls -lisa; \
+  fi && \
   # create installation profile for full scheme installation with
   # the selected options
   echo "Building with documentation: $DOCFILES" && \
@@ -38,11 +39,12 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   # fiddling around with the PATH
   echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
   # actually install TeX Live
-  ./install-tl -profile install.profile && \
-  cd .. && \
-  rm -rf texlive
+  ./install-tl -profile install.profile
 
 # create data image containing only the TeX Live installation
 FROM scratch
+COPY --link --from=installer /usr/local/texlive /usr/local/texlive
 
-COPY --from=installer /usr/local/texlive /usr/local/texlive
+LABEL org.opencontainers.image.authors="Island of TeX" \
+  org.opencontainers.image.url=https://gitlab.com/islandoftex/images/texlive \
+  org.opencontainers.image.source=https://gitlab.com/islandoftex/images/texlive/-/blob/master/Dockerfile.tree

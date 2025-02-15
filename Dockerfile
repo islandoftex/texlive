@@ -67,13 +67,13 @@ RUN echo "Fetching installation from mirror $TLMIRRORURL" && \
   # actually install TeX Live
   ./install-tl -profile install.profile && \
   # set tlmgr repository for pretest as updates will not be supported otherwhise
-  if [ "${TLMIRRORURL#*pretest}" != "$TLMIRRORURL" ]; then tlmgr option repository "$TLMIRRORURL"; fi && \
   cd .. && \
   rm -rf texlive
 
 WORKDIR /workdir
 RUN echo "Set PATH to $PATH" && \
   $(find /usr/local/texlive -name tlmgr) path add && \
+  if [ "${TLMIRRORURL#*pretest}" != "$TLMIRRORURL" ]; then tlmgr option repository "$TLMIRRORURL"; fi && \
   # Temporary fix for ConTeXt (#30)
   (sed -i '/package.loaded\["data-ini"\]/a if os.selfpath then environment.ownbin=lfs.symlinktarget(os.selfpath..io.fileseparator..os.selfname);environment.ownpath=environment.ownbin:match("^.*"..io.fileseparator) else environment.ownpath=kpse.new("luatex"):var_value("SELFAUTOLOC");environment.ownbin=environment.ownpath..io.fileseparator..(arg[-2] or arg[-1] or arg[0] or "luatex"):match("[^"..io.fileseparator.."]*$") end' /usr/bin/mtxrun.lua || true) && \
   # pregenerate caches as per #3; overhead is < 5 MB which does not really

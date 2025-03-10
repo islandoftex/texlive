@@ -166,11 +166,11 @@ test:pretest:
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)
 # build historic images batch i (one)
-build:tree:21to23:
+build:tree:21to24:
   extends: .treetemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2021, 2022, 2023]
+      - CURRENTRELEASE: [2021, 2022, 2023, 2024]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -201,7 +201,7 @@ build:historic:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -211,7 +211,7 @@ test:historic:
   extends: .testtemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICIMAGES == "true"'

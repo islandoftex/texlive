@@ -41,6 +41,12 @@ pre-commit:
     - arara -l -v test.tex
     - mtxrun --generate && context test.mkiv
 
+.testtemplate-historic:
+  stage: test
+  script:
+    - pdflatex --shell-escape test.tex
+    - mtxrun --generate && context test.mkiv
+
 build:baseimage:
   stage: baseimage
   extends: .buildtemplate
@@ -208,7 +214,7 @@ build:historic:
     - if: '$HISTORICIMAGES == "true"'
 test:historic:
   image: $RELEASE_IMAGE:TL$CURRENTRELEASE-historic
-  extends: .testtemplate
+  extends: .testtemplate-historic
   parallel:
     matrix:
       - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]

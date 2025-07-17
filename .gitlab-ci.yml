@@ -151,7 +151,7 @@ build:latest:
     matrix:
       - DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
-        SCHEME: ["minimal", "basic", "small", "medium", "full"]
+        SCHEME: ["minimal", "basic", "small", "medium", "full", "context"]
 test:latest:
   image: $RELEASE_IMAGE:latest
   needs: ["build:latest"]
@@ -163,7 +163,7 @@ build:pretest:
     matrix:
       - DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
-        SCHEME: ["minimal", "basic", "small", "medium", "full"]
+        SCHEME: ["minimal", "basic", "small", "medium", "full", "context"]
 test:pretest:
   image: $RELEASE_IMAGE:pretest
   needs: ["build:pretest"]

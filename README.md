@@ -60,7 +60,8 @@ that worked, e.g. `TL2022-2022-06-05`.
 
 `latest` images are also available for different TeX Live *schemes*. The
 following schemes are built: `minimal`, `basic`, `small`, `medium`, and `full`
-(as well as `context` for ConTeXt users).  
+(as well as `context` for ConTeXt users).
+
 For all these, you may use them with doc tree, src tree, or both, or none like
 you would a regular `latest` image. Example: `latest-small-doc` will pull the
 `latest` image built with the basic scheme and the doc tree (without source

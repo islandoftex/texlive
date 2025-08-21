@@ -2,6 +2,11 @@
 
 ## TeX Live 2024
 
+## 2025-08
+
+* Added `tidy` and `zip` to allow running `tex4ebook`.
+  (see #54)
+
 ## 2025-02
 
 * There is now a new `texlive` non-root user.

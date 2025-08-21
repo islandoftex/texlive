@@ -32,7 +32,9 @@ RUN apt-get update && \
   # for gnuplot backend of pgfplots (see !13)
   gnuplot-nox \
   # for asymptote (see #48)
-  libglut3.12 libtirpc3t64 && \
+  libglut3.12 libtirpc3t64 \
+  # for tex4ebook (see #54)
+  tidy zip && \
   rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/apt/ && \
   export LIBDIR && \

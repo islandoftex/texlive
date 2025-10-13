@@ -50,7 +50,7 @@ ENV PATH=/usr/local/texlive/$CURRENTRELEASE/bin/x86_64-linux:$PATH \
     MANPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/man:$MANPATH \
     INFOPATH=/usr/local/texlive/$CURRENTRELEASE/texmf-dist/doc/info:$INFOPATH
 
-WORKDIR /
+WORKDIR /workdir
 RUN echo "Set PATH to $PATH" && \
   # pregenerate caches as per #3; overhead is < 5 MB which does not really
   # matter for images in the sizes of GBs

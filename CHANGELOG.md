@@ -1,11 +1,18 @@
 # Changelog for the TeX Live Docker images
 
-## TeX Live 2024
+## TeX Live 2025
+
+## 2025-10
+
+* Change default working directory to `/workdir` for historic images.
+  (see #55)
 
 ## 2025-08
 
 * Added `tidy` and `zip` to allow running `tex4ebook`.
   (see #54)
+
+## TeX Live 2024
 
 ## 2025-02
 

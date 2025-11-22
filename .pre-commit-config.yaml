@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: check-merge-conflict
   - id: check-symlinks
@@ -19,7 +19,7 @@ repos:
   - id: forbid-tabs
   - id: remove-tabs
 - repo: https://github.com/hadolint/hadolint
-  rev: v2.13.1-beta
+  rev: v2.14.0
   hooks:
   - id: hadolint
     # ignore apt version pinning and WORKDIR directory switching
@@ -33,7 +33,7 @@ repos:
     - id: shellcheck
     - id: shfmt
       args: ['-i 2']
-- repo: https://github.com/nix-community/nixpkgs-fmt
-  rev: v1.3.0
+- repo: https://github.com/NixOS/nixfmt
+  rev: v1.1.0
   hooks:
-  - id: nixpkgs-fmt
+  - id: nixfmt-nix

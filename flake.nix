@@ -6,8 +6,14 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, flake-utils, nixpkgs }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+  outputs =
+    {
+      self,
+      flake-utils,
+      nixpkgs,
+    }:
+    flake-utils.lib.eachSystem [ "x86_64-linux" ] (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -21,7 +27,7 @@
               pre-commit
               # ... and all its dependencies for the hooks
               hadolint
-              nixpkgs-fmt
+              nixfmt-rfc-style
               shellcheck
               shfmt
               # nixpkgs-fmt on other hand also depends on rust

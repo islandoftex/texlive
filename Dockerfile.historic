@@ -25,6 +25,7 @@ RUN echo "deb http://ftp.de.debian.org/debian bookworm main" >> /etc/apt/sources
   # fetch libncurses5 from Debian package repositories. Xindy requires
   # libncurses5.
   apt-get install -qy --no-install-recommends libncurses5 && \
+  apt-mark hold libncurses5 && \
   # Mark all texlive packages as installed. This enables installing
   # latex-related packges in child images.
   # Inspired by https://tex.stackexchange.com/a/95373/9075.

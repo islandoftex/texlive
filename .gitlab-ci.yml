@@ -172,6 +172,16 @@ test:pretest:
 # NOTE: historic images have to be built in batches (because the server has a
 #       rate limit which we should obey to get the CI passing)
 # build historic images batch i (one)
+build:tree:25:
+  extends: .treetemplate
+  parallel:
+    matrix:
+      - CURRENTRELEASE: [2025]
+        DOCFILES: ["yes", "no"]
+        SRCFILES: ["yes", "no"]
+  rules:
+    - if: '$HISTORICTREEBATCHI == "true"'
+# build historic images batch ii (two)
 build:tree:21to24:
   extends: .treetemplate
   parallel:
@@ -180,8 +190,8 @@ build:tree:21to24:
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
-    - if: '$HISTORICTREEBATCHI == "true"'
-# build historic images batch ii (two)
+    - if: '$HISTORICTREEBATCHII == "true"'
+# build historic images batch iii (three)
 build:tree:17to20:
   extends: .treetemplate
   parallel:
@@ -190,8 +200,8 @@ build:tree:17to20:
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
-    - if: '$HISTORICTREEBATCHII == "true"'
-# build historic images batch iii (three)
+    - if: '$HISTORICTREEBATCHIII == "true"'
+# build historic images batch iv (four)
 build:tree:13to16:
   extends: .treetemplate
   parallel:
@@ -200,14 +210,14 @@ build:tree:13to16:
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
-    - if: '$HISTORICTREEBATCHIII == "true"'
+    - if: '$HISTORICTREEBATCHIV == "true"'
 
 # build historic images based on our tree images
 build:historic:
   extends: .historictemplate
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
         DOCFILES: ["yes", "no"]
         SRCFILES: ["yes", "no"]
   rules:
@@ -217,7 +227,7 @@ test:historic:
   extends: .testtemplate-historic
   parallel:
     matrix:
-      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+      - CURRENTRELEASE: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
         TESTBUILD: "true" # this is a dummy parameter to make the matrix run the list
   rules:
     - if: '$HISTORICIMAGES == "true"'

@@ -1,0 +1,108 @@
+# syntax=docker/dockerfile:1
+FROM rockylinux/rockylinux:10-ubi-init
+
+# Install CRB (Code Ready Builder) repository needed for ImageMagick/Ghostscript dependencies
+RUN dnf -y install dnf-plugins-core && \
+    dnf config-manager --set-enabled crb
+
+# Install EPEL repository for extra packages (pandoc, poppler-utils, etc.)
+RUN dnf -y install \
+    https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
+
+# Install RPM Fusion for FFmpeg (Rocky Linux base does not package FFmpeg)
+RUN dnf install -y --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-10.noarch.rpm
+RUN dnf install -y --nogpgcheck https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-10.noarch.rpm
+
+# Install system utilities, PDF engines, ImageMagick, and FFmpeg
+RUN dnf -y update && \
+    dnf -y install \
+    perl \
+    perl-Digest-MD5 \
+    wget \
+    tar \
+    fontconfig \
+    make \
+    which \
+    git \
+    xz \
+    ImageMagick \
+    ImageMagick-devel \
+    ffmpeg \
+    ffmpeg-devel \
+    ghostscript \
+    poppler-utils \
+    pandoc \
+    rsync \
+    graphviz \
+    python3 \
+    python3-pip \
+    vim && \
+    dnf clean all
+
+# Create a temporary directory for the TeX Live installer
+WORKDIR /tmp/install-tl
+
+# Fix ImageMagick security policy to allow PDF reading/writing if needed by tools like tex4ht
+RUN sed -i 's/domain="coder" rights="none" pattern="PDF"/domain="coder" rights="read|write" pattern="PDF"/g' /etc/ImageMagick-7/policy.xml || true
+
+ENV DOCFILES=yes SRCFILES=yes SCHEME=full TLMIRRORURL=rsync://rsync.dante.ctan.org/CTAN/systems/texlive/tlnet/ GENERATE_CACHES=yes 
+RUN /bin/sh -c echo "Fetching installation from mirror $TLMIRRORURL" && \
+  rsync -a --stats "$TLMIRRORURL" texlive && \
+  cd texlive && \
+  echo "Building with documentation: $DOCFILES" && \
+  echo "Building with sources: $SRCFILES" && \
+  echo "Building with scheme: $SCHEME" && \
+  echo "selected_scheme scheme-$SCHEME" > install.profile && \
+  if [ "$DOCFILES" = "no" ]; then echo "tlpdbopt_install_docfiles 0" >> install.profile && \
+    echo "BUILD: Disabling documentation files"; fi && \
+  if [ "$SRCFILES" = "no" ]; then echo "tlpdbopt_install_srcfiles 0" >> install.profile && \
+    echo "BUILD: Disabling source files"; fi && \
+  echo "tlpdbopt_autobackup 0" >> install.profile && \
+  echo "tlpdbopt_sys_bin /usr/bin" >> install.profile && \
+  ./install-tl -profile install.profile && \
+  cd .. && \
+  rm -rf texlive # buildkit
+
+ENV PATH="/usr/local/texlive/2026/bin/x86_64-linux:$PATH"
+
+# Set a default working directory for running documentation builds
+WORKDIR /workdir
+
+RUN echo "Building caches" && \
+  (sed -i '/package.loaded\["data-ini"\]/a if os.selfpath then environment.ownbin=lfs.symlinktarget(os.selfpath..io.fileseparator..os.selfname);environment.ownpath=environment.ownbin:match("^.*"..io.fileseparator) else environment.ownpath=kpse.new("luatex"):var_value("SELFAUTOLOC");environment.ownbin=environment.ownpath..io.fileseparator..(arg[-2] or arg[-1] or arg[0] or "luatex"):match("[^"..io.fileseparator.."]*$") end' /usr/local/texlive/*/bin/*/mtxrun.lua || true) && \
+  if [ "$GENERATE_CACHES" = "yes" ]; then \
+    echo "Generating caches and ConTeXt files" && \
+    (luaotfload-tool -u || true) && \
+    (/bin/cp -f "$(find /usr/local/texlive -name texlive-fontconfig.conf)" /etc/fonts/conf.d/09-texlive-fonts.conf || true) && \
+    fc-cache -fsv && \
+    if which context; then \
+      mtxrun --generate && \
+      texlua /usr/local/texlive/*/bin/*/mtxrun.lua --luatex --generate && \
+      context --make && \
+      context --luatex --make; \
+    fi \
+  else \
+    echo "Not generating caches or ConTeXt files"; \
+  fi
+
+ENV PATH="/usr/local/bin:$PATH"
+
+# Placeholder dummy package to allow the rest of the RPMs to install
+COPY texlive-dummy-1-0.x86_64.rpm /workdir/
+
+# Install Java and additional libraries/packages
+RUN curl -Lo java.rpm 'https://javadl.oracle.com/webapps/download/AutoDL?BundleId=253184_f7fe8e644f724108bdb54139381e29a7' && \
+    dnf install -y java.rpm texlive-dummy-1-0.x86_64.rpm && rm java.rpm texlive-dummy-1-0.x86_64.rpm &&  \
+    mkdir -p /usr/share/vim/vimfiles/pack/plugins/start && \
+    git clone https://github.com/lervag/vimtex.git /usr/share/vim/vimfiles/pack/plugins/start/vimtex && \
+    echo -e "\nsyntax enable\nfiletype plugin on\nlet g:vimtex_view_method = 'zathura'" >> /etc/vimrc && \
+    dnf install -y kile linuxdoc-tools tex-preview gnuplot-latex latex2html hevea doxygen-latex \
+        python3-pygments zziplib netpbm netpbm-progs perl-Text-Unidecode perl-XML-XPath teckit && \
+    ln -s /usr/bin/python3 /usr/bin/python
+
+RUN chown nobody: /workdir
+USER nobody
+
+# Default command to run if the container is started interactively
+CMD ["bash"]
+

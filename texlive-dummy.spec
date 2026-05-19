@@ -62,7 +62,12 @@ Provides:      tex(cm-super-t1.enc)
 Provides:      tex(ecrm1000.tfm)
 Provides:      tex(latex)
 Provides:      tex(utf8x.def)
+Provides:      tex(comment.sty)
 Provides:      tex-preview
+Provides:      tex-latex-bin
+Provides:      tex-latex-bin-bin
+Provides:      texlive-dvips
+Provides:      texlive-latex-fonts
 
 
 
@@ -74,12 +79,14 @@ This is a dummy tex package created for testing purposes.
 
 %install
 mkdir -p %{buildroot}/usr/bin
+ln -s /usr/local/texlive/*/bin/*-linux/dvips %{buildroot}/usr/bin
 ln -s /usr/local/texlive/*/bin/*-linux/latex %{buildroot}/usr/bin
 ln -s /usr/local/texlive/*/bin/*-linux/pdflatex %{buildroot}/usr/bin
 ln -s /usr/local/texlive/*/bin/*-linux/texconfig-sys %{buildroot}/usr/bin
 
 
 %files
+/usr/bin/dvips
 /usr/bin/latex
 /usr/bin/pdflatex
 /usr/bin/texconfig-sys

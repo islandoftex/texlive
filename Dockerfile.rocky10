@@ -96,9 +96,9 @@ RUN curl -Lo java.rpm 'https://javadl.oracle.com/webapps/download/AutoDL?BundleI
     mkdir -p /usr/share/vim/vimfiles/pack/plugins/start && \
     git clone https://github.com/lervag/vimtex.git /usr/share/vim/vimfiles/pack/plugins/start/vimtex && \
     echo -e "\nsyntax enable\nfiletype plugin on\nlet g:vimtex_view_method = 'zathura'" >> /etc/vimrc && \
-    dnf install -y kile linuxdoc-tools tex-preview gnuplot-latex latex2html hevea doxygen-latex \
-        python3-pygments zziplib netpbm netpbm-progs perl-Text-Unidecode perl-XML-XPath teckit && \
-    ln -s /usr/bin/python3 /usr/bin/python
+    dnf install -y kile linuxdoc-tools tex-preview latex2html doxygen-latex \
+        python3-pygments zziplib netpbm netpbm-progs perl-Text-Unidecode perl-XML-XPath teckit \
+        https://www.rpmfind.net/linux/fedora/linux/releases/44/Everything/x86_64/os/Packages/h/hevea-2.38-1.fc44.x86_64.rpm
 
 RUN chown nobody: /workdir
 USER nobody

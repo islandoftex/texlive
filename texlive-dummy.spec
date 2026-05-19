@@ -84,7 +84,7 @@ License:       GPL
 URL:           https://github.com/islandoftex/texlive
 
 %description
-This is a dummy tex package created for testing purposes.
+This is a dummy tex package created for placeholding a manually installed texlive-full.
 
 %install
 mkdir -p %{buildroot}/usr/bin

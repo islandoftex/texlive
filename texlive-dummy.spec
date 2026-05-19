@@ -1,8 +1,19 @@
+# This is a placeholder package for a docker container in which the full techstack has been
+# manually installed.  It is not meant for use outside this dedicated built docker container
+# as it has no upgrade path.  As RedHat managed packages make use of the tex applications
+# the ability to still load up these packages provides continued support for tools outside
+# the texlive infrastructure.
+#
+# To build this into an rpm file use:
+#
+# $ rpmbuild -bb texlive-dummy.spec
+#
+# in the RedHat image of choice and an rpm will be built in the user's home folder.
 Name:           texlive-dummy
 Version:        1
 Release:        0
 Epoch:          99
-Summary:        A dummy tex package
+Summary:        A dummy tex package to allow additional RedHat packages to be installed with a manual texlive full install.
 
 Provides:      tex(dvips)
 Provides:      tex(latex)
@@ -69,10 +80,8 @@ Provides:      tex-latex-bin-bin
 Provides:      texlive-dvips
 Provides:      texlive-latex-fonts
 
-
-
-License:        GPL
-URL:            https://example.com
+License:       GPL
+URL:           https://github.com/islandoftex/texlive
 
 %description
 This is a dummy tex package created for testing purposes.
@@ -84,7 +93,7 @@ ln -s /usr/local/texlive/*/bin/*-linux/latex %{buildroot}/usr/bin
 ln -s /usr/local/texlive/*/bin/*-linux/pdflatex %{buildroot}/usr/bin
 ln -s /usr/local/texlive/*/bin/*-linux/texconfig-sys %{buildroot}/usr/bin
 
-
+# Some of the RedHat packages "Require" direct file paths.  We'll make these available via symbolic links:
 %files
 /usr/bin/dvips
 /usr/bin/latex

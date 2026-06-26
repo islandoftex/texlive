@@ -75,9 +75,11 @@ RUN echo "Set PATH to $PATH" && \
   # set tlmgr repository for pretest as updates will not be supported otherwhise
   if [ "${TLMIRRORURL#*pretest}" != "$TLMIRRORURL" ]; then tlmgr option repository "$TLMIRRORURL"; fi && \
   # add tlcontrib repository as per request on Matrix (repo only, we don't
-  # install any packages from there, so no license problems)
+  # install any packages from there, so no license problems; the pinning
+  # is done manually because tlmgr can run into mirror race conditions)
   tlmgr repository add http://contrib.texlive.info/current tlcontrib && \
-  tlmgr pinning add tlcontrib "*" && \
+  mkdir -p "$(kpsewhich -var-value=TEXMFLOCAL)/tlpkg" && \
+  echo "tlcontrib: *" >> "$(kpsewhich -var-value=TEXMFLOCAL)/tlpkg/pinning.txt" && \
   # Temporary fix for ConTeXt (#30)
   (sed -i '/package.loaded\["data-ini"\]/a if os.selfpath then environment.ownbin=lfs.symlinktarget(os.selfpath..io.fileseparator..os.selfname);environment.ownpath=environment.ownbin:match("^.*"..io.fileseparator) else environment.ownpath=kpse.new("luatex"):var_value("SELFAUTOLOC");environment.ownbin=environment.ownpath..io.fileseparator..(arg[-2] or arg[-1] or arg[0] or "luatex"):match("[^"..io.fileseparator.."]*$") end' /usr/bin/mtxrun.lua || true) && \
   # pregenerate caches as per #3; overhead is < 5 MB which does not really
